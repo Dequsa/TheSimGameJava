@@ -11,7 +11,7 @@ public abstract class Organism {
     private int age = 0;
     private boolean active = true;
 
-    private final Controller controller;
+    protected final Controller controller;
 
     public Organism(Vec2 position, Controller controller) {
         this.position = position;
@@ -35,12 +35,8 @@ public abstract class Organism {
         }
     }
 
-    protected Vec2 getRandomMoveVec() {
-        var rand = new java.util.Random();
-        int y = position.y();
-
-        Vec2[] validMoves;
-
+    protected Vec2[] getValidMoves(int y) {
+        Vec2 []validMoves;
         if (y % 2 == 0) {
             validMoves = new Vec2[] {
                     new Vec2(-1, -1), // Up Left
@@ -62,6 +58,15 @@ public abstract class Organism {
                     new Vec2(0, 0)    // No move
             };
         }
+        return validMoves;
+    }
+
+    protected Vec2 getRandomMoveVec() {
+        var rand = new java.util.Random();
+        int y = position.y();
+
+        Vec2[] validMoves = getValidMoves(y);
+
         int randomIndex = rand.nextInt(validMoves.length);
         return validMoves[randomIndex];
     }
@@ -103,6 +108,12 @@ public abstract class Organism {
     public Color getColor() {
         return getData().color();
     }
+
+    public boolean specialAbilityCheck(Organism other) {
+        return false;
+    }
+
+    protected boolean specialAbility(Organism other) {return false;}
 
     @Override
     public String toString() {

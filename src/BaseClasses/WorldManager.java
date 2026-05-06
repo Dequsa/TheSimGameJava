@@ -1,5 +1,6 @@
 package BaseClasses;
 
+import Animals.Fox;
 import Animals.Sheep;
 import Animals.Wolf;
 import Structs.Controller;
@@ -125,7 +126,7 @@ public class WorldManager implements Controller {
 
     private void populateMap(int organismCount) {
         for (int i = 0; i < organismCount; i++) {
-            int type_id = rand.nextInt(Types.FOX.ordinal());
+            int type_id = rand.nextInt(Types.NONE.ordinal());
             Types type = Types.values()[type_id];
             var childPosition = getRandomPosition();
             var child = spawnOrganism(childPosition, type);
@@ -154,9 +155,9 @@ public class WorldManager implements Controller {
             case SHEEP -> {
                 return new Sheep(pos, this);
             }
-//            case FOX -> {
-//                child = new Fox(pos, this);
-//            }
+            case FOX -> {
+                return new Fox(pos, this);
+            }
             default -> {
                 return null;
             }
@@ -210,7 +211,6 @@ public class WorldManager implements Controller {
             if (!organism.isActive()) {
                 continue;
             }
-
             organism.Update();
         }
     }
@@ -234,15 +234,47 @@ public class WorldManager implements Controller {
         return null;
     }
 
+    enum FightResults {
+        ATTACKER_WIN,
+        DEFENDER_WIN,
+        DEFENDER_SPECIAL,
+        ATTACKER_SPECIAL
+    }
+
     // true attacker won he can move to next tile
     // false attacker lost and he died
-    private boolean fight(Organism attacker, Organism defender) {
+    private FightResults fight(Organism attacker, Organism defender) {
         var winner = attacker.data.str() >= defender.data.str() ? attacker : defender;
 
         attacker.setActive(false);
         defender.setActive(false);
 
-        return winner == attacker;
+
+        if (attacker.specialAbilityCheck(defender)) {
+
+            // couldn't use special no space or sum else
+            if (!attacker.specialAbilityCheck(defender)) {
+                return FightResults.DEFENDER_WIN;
+            }
+
+            return FightResults.ATTACKER_SPECIAL;
+        }
+
+        if (defender.specialAbilityCheck(attacker)) {
+
+            // couldn't defend sum happen
+            if (!defender.specialAbility(attacker)) {
+                return FightResults.ATTACKER_WIN;
+            }
+
+            return FightResults.DEFENDER_SPECIAL;
+        }
+
+        if (winner == attacker) {
+            return FightResults.ATTACKER_WIN;
+        }
+
+        return  FightResults.DEFENDER_WIN;
     }
 
     @Override
@@ -251,6 +283,17 @@ public class WorldManager implements Controller {
             return false;
         }
         return !isOutOfBounds(o.getPosition().add(moveVec));
+    }
+
+    @Override
+    public boolean checkSafeTiles(Vec2 oPosition, Vec2 moveVec) {
+        var newPosition = oPosition.add(moveVec);
+
+        if (!isOutOfBounds(newPosition)) {
+            return worldMap[newPosition.x()][newPosition.y()] == null;
+        }
+
+        return false;
     }
 
     @Override
@@ -264,14 +307,19 @@ public class WorldManager implements Controller {
 
         switch(isOccupied(target.getPosition(), o.data.type())) {
             case FIGHT -> {
-
-                if (fight(o, target)) {
-                    removeFromWorld(target);
-                    return Results.FIGHT_WON;
+                switch (fight(o, target)) {
+                    case ATTACKER_WIN -> {
+                        removeFromWorld(target);
+                        return Results.FIGHT_WON;
+                    }
+                    case DEFENDER_WIN -> {
+                        removeFromWorld(o);
+                        return Results.FIGHT_LOST;
+                    }
+                    default -> {
+                        return Results.NONE;
+                    }
                 }
-
-                removeFromWorld(o);
-                return Results.FIGHT_LOST;
             }
             case REPRODUCE -> {
                 Organism []orgs = new Organism[2];
