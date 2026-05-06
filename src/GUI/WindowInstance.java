@@ -21,6 +21,10 @@ public class WindowInstance {
         frame.requestFocus();
     }
 
+    public void updateWindowSize() {
+        frame.pack();
+    }
+
     public void refresh() {
         frame.repaint();
     }

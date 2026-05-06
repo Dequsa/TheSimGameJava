@@ -7,19 +7,26 @@ import java.awt.*;
 
 public class Main {
   void main() {
+    int winSizeX = 800;
+    int winSizeY = 600;
+
     int tileSize = 30;
     int mapSize = 20;
     int organismCount = 10;
     int buff = 50;
 
     WorldManager worldManager = new WorldManager(organismCount, mapSize);
-    var window = new WindowInstance(mapSize * tileSize + buff, mapSize * tileSize + buff);
+
+    var window = new WindowInstance(winSizeX, winSizeY);
+
     var keyHandler = new InputHandler(worldManager);
     window.addKeyListener(keyHandler);
+
     var worldPanel = new WorldPanel(worldManager, tileSize);
 
     window.addComponent(worldPanel);
-    window.getFrame().pack();
+
+    window.updateWindowSize();
     window.show();
 
     while (worldManager.isRunning()) {

@@ -15,8 +15,8 @@ public class WorldManager implements Controller {
     private final Random rand = new Random(); // randomizer
     private final ArrayList<Organism> organisms;
     private final Organism[][] worldMap;
-    private ArrayList<Organism> toAdd = new ArrayList<>();
-    private ArrayList<Organism> toRemove = new ArrayList<>();
+    private final ArrayList<Organism> toAdd = new ArrayList<>();
+    private final ArrayList<Organism> toRemove = new ArrayList<>();
 
     enum ColisionType {
         EMPTY,
@@ -159,12 +159,19 @@ public class WorldManager implements Controller {
 
             if (a == b) return 0;
 
-            if (a.getData().str() == b.getData().str()) {
-                return a.getAge() >  b.getAge() ? 1 : -1;
-            }
+            int initCompare = Integer.compare(a.getData().init(), b.getData().init());
 
-            return a.getData().str() >  b.getData().str() ?  -1 : 1;
+            if (initCompare != 0) return -initCompare;
+
+            return  Integer.compare(a.getAge(), b.getAge());
+
         });
+
+        // other way to do it "modern way" as a bonus maybe later when i finally understand wtf is the thenComapringInt
+//        organisms.sort(
+//                Comparator.comparingInt((Organism o) -> o.getData().str()).reversed()
+//                        .thenComparingInt(Organism::getAge)
+//        );
     }
 
     private void fillAndRemoveOrganisms() {
