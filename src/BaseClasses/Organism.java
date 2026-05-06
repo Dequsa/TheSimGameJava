@@ -37,13 +37,33 @@ public abstract class Organism {
 
     protected Vec2 getRandomMoveVec() {
         var rand = new java.util.Random();
+        int y = position.y();
 
+        Vec2[] validMoves;
 
-
-        int x  = rand.nextInt(3) - 1;
-        int y = rand.nextInt(3) - 1;
-
-        return new Vec2(x,y);
+        if (y % 2 == 0) {
+            validMoves = new Vec2[] {
+                    new Vec2(-1, -1), // Up Left
+                    new Vec2(0, -1),  // Up Right
+                    new Vec2(-1, 0),  // Left
+                    new Vec2(1, 0),   // Right
+                    new Vec2(-1, 1),  // Down Left
+                    new Vec2(0, 1),   // Down Right
+                    new Vec2(0, 0)    // No move
+            };
+        } else {
+            validMoves = new Vec2[] {
+                    new Vec2(0, -1),  // Up Left
+                    new Vec2(1, -1),  // Up Right
+                    new Vec2(-1, 0),  // Left
+                    new Vec2(1, 0),   // Right
+                    new Vec2(0, 1),   // Down Left
+                    new Vec2(1, 1),   // Down Right
+                    new Vec2(0, 0)    // No move
+            };
+        }
+        int randomIndex = rand.nextInt(validMoves.length);
+        return validMoves[randomIndex];
     }
 
     protected void move(Vec2 moveVec) {
