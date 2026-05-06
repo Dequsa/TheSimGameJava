@@ -6,12 +6,11 @@ import Structs.Types;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
 public class WorldPanel extends JPanel {
     private final WorldManager worldManager;
-    private final int radius;
+    private int radius;
 
     private Polygon getHexagonAtPosition(int x, int y) {
         double hexWidth = Math.sqrt(3) * radius;
@@ -47,7 +46,7 @@ public class WorldPanel extends JPanel {
     }
 
     private MouseAdapter createMouseListener() {
-        var m = new MouseAdapter() {
+        return new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 int mouseX = e.getX();
@@ -74,23 +73,49 @@ public class WorldPanel extends JPanel {
                 }
             }
         };
-        return m;
     }
 
     public WorldPanel(WorldManager worldManager, int radius) {
         this.worldManager = worldManager;
         this.radius = radius;
+        // mouse input handler
         this.addMouseListener(createMouseListener());
 
-        // hexagon math
+        // "resizer" for components
+        this.addComponentListener(createComponentListener());
+
+        // hexagon width from center because of flat wall
         double hexWidth = Math.sqrt(3) * radius;
+
+        // hexagon height from center because of spike on top / bottom
         double hexHeight = radius * 1.5;
 
-        int totalWidth = (int) (worldManager.getMapSizeX() * hexWidth + (hexWidth / 2.0));
-        int totalHeight = (int) (worldManager.getMapSizeY() * hexHeight + (radius * 0.5));
+        int totalWidth = (int) (worldManager.getMapSizeX() * hexWidth + (hexWidth / 2.0)); // add half of the hexagon because of the zig-zag shape on the sides
+        int totalHeight = (int) (worldManager.getMapSizeY() * hexHeight + (radius * 0.5)); // same here
 
         this.setPreferredSize(new Dimension(totalWidth, totalHeight));
         this.setBackground(Color.DARK_GRAY);
+    }
+
+    private ComponentListener createComponentListener() {
+        return new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int currentWidth = getWidth();
+                int currentHeight = getHeight();
+                int margin = 20;
+
+                // max radius that can fit in horizontal axis from hexagons
+                double maxRadiusX = (currentWidth - (margin * 2)) / (worldManager.getMapSizeX() * Math.sqrt(3));
+
+                // max radius that can fit in vertical axis form hexagons
+                double maxRadiusY = (currentHeight - (margin * 2)) / (worldManager.getMapSizeY() * 1.5);
+
+                radius = (int) Math.min(maxRadiusX, maxRadiusY);
+
+                repaint();
+            }
+        };
     }
 
     public Polygon createHexagon(int centerX, int centerY, int radius) {
@@ -126,7 +151,7 @@ public class WorldPanel extends JPanel {
 
                 Polygon hex = getHexagonAtPosition(x, y);
 
-                g2d.setColor(Color.DARK_GRAY);
+                g2d.setColor(Color.GRAY);
                 g2d.fillPolygon(hex);
                 g2d.setColor(Color.BLACK);
                 g2d.drawPolygon(hex);

@@ -253,7 +253,7 @@ public class WorldManager implements Controller {
         if (attacker.specialAbilityCheck(defender)) {
 
             // couldn't use special no space or sum else
-            if (!attacker.specialAbilityCheck(defender)) {
+            if (!attacker.specialAbility(defender)) {
                 return FightResults.DEFENDER_WIN;
             }
 
@@ -316,7 +316,7 @@ public class WorldManager implements Controller {
                         removeFromWorld(o);
                         return Results.FIGHT_LOST;
                     }
-                    default -> {
+                    default -> { // its also for special abilities use
                         return Results.NONE;
                     }
                 }

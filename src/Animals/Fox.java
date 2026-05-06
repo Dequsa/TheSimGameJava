@@ -31,7 +31,7 @@ public class Fox extends Organism {
         setMoving(false);
     }
 
-    private Vec2 findSafeSpot(Vec2 enemyPos) {
+    private Vec2 findSafeSpot() {
         Vec2 []possibleMove = getValidMoves(getPosition().y());
 
         var safeMoves = new ArrayList<Vec2>(possibleMove.length);
@@ -51,8 +51,8 @@ public class Fox extends Organism {
         return safeMoves.get(idx);
     }
 
-    private boolean avoidEnemy(Vec2 enemyPos) {
-        Vec2 safePosition = findSafeSpot(enemyPos);
+    private boolean avoidEnemy(Organism other) {
+        Vec2 safePosition = findSafeSpot();
 
         // can't escape
         if  (safePosition == null) {
@@ -61,6 +61,7 @@ public class Fox extends Organism {
 
         super.move(safePosition);
 
+        System.out.println(this + " has avoided an enemy: " + other);
 
         return true;
     }
@@ -76,8 +77,7 @@ public class Fox extends Organism {
     }
 
     protected boolean specialAbility(Organism other) {
-        System.out.println(this + "has avoided an enemy.");
-        return avoidEnemy(other.getPosition());
+        return avoidEnemy(other);
     }
 
     public boolean isMoving() {
