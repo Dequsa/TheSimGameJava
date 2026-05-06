@@ -37,6 +37,20 @@ public class WorldManager implements Controller {
         populateMap(organismCount);
     }
 
+    public void handleMouseClick(int x, int y, Types type) {
+        Organism target = worldMap[x][y];
+        if (target != null) {
+            target.setActive(false);
+            removeFromWorld(target);
+            System.out.println("Removed organism: " + target);
+            return;
+        }
+
+        Vec2 pos = new Vec2(x, y);
+        Organism child = spawnOrganism(pos, type);
+        addToWorld(child);
+    }
+
     private boolean isOutOfBounds(Vec2 newPosition) {
         boolean x_hit = newPosition.x() < 0 || newPosition.x() >= worldMap.length;
         boolean y_hit = newPosition.y() < 0 || newPosition.y() >= worldMap[0].length;
@@ -97,12 +111,15 @@ public class WorldManager implements Controller {
     }
 
     private void addToWorld(Organism o) {
+        o.setActive(false);
         toAdd.add(o);
         worldMap[o.getPosition().x()][o.getPosition().y()] = o;
     }
 
     private void removeFromWorld(Organism o) {
+        o.setActive(false);
         toRemove.add(o);
+        toAdd.remove(o);
         worldMap[o.getPosition().x()][o.getPosition().y()] = null;
     }
 
@@ -166,12 +183,6 @@ public class WorldManager implements Controller {
             return  Integer.compare(a.getAge(), b.getAge());
 
         });
-
-        // other way to do it "modern way" as a bonus maybe later when i finally understand wtf is the thenComapringInt
-//        organisms.sort(
-//                Comparator.comparingInt((Organism o) -> o.getData().str()).reversed()
-//                        .thenComparingInt(Organism::getAge)
-//        );
     }
 
     private void fillAndRemoveOrganisms() {
@@ -192,6 +203,7 @@ public class WorldManager implements Controller {
     }
 
     public void Update() {
+        fillAndRemoveOrganisms();
         resetActivityAll();
 
         for (Organism organism : organisms) {
@@ -201,7 +213,6 @@ public class WorldManager implements Controller {
 
             organism.Update();
         }
-        fillAndRemoveOrganisms();
     }
 
     private Organism reproduce(Organism []orgs) {

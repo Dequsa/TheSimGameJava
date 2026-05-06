@@ -21,10 +21,6 @@ public class WindowInstance {
         frame.requestFocus();
     }
 
-    public void updateWindowSize() {
-        frame.pack();
-    }
-
     public void refresh() {
         frame.repaint();
     }
@@ -35,12 +31,10 @@ public class WindowInstance {
     }
 
     public void addComponent(JComponent component) {
-        frame.add(component);
+        frame.getContentPane().add(component, BorderLayout.CENTER);
     }
 
     public void addKeyListener(KeyListener keyListener) {
         frame.addKeyListener(keyListener);
     }
-
-    public JFrame getFrame() {return frame;};
 }

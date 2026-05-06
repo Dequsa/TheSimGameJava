@@ -3,30 +3,25 @@ import GUI.WindowInstance;
 import GUI.WorldPanel;
 import Input.InputHandler;
 
-import java.awt.*;
-
 public class Main {
   void main() {
-    int winSizeX = 800;
-    int winSizeY = 600;
+    int defaultWinSizeX = 800;
+    int defaultWinSizeY = 600;
 
-    int tileSize = 30;
-    int mapSize = 20;
+    int radius = 20;
     int organismCount = 10;
-    int buff = 50;
 
-    WorldManager worldManager = new WorldManager(organismCount, mapSize);
+    WorldManager worldManager = new WorldManager(organismCount, radius);
 
-    var window = new WindowInstance(winSizeX, winSizeY);
+    var window = new WindowInstance(defaultWinSizeX, defaultWinSizeY);
 
     var keyHandler = new InputHandler(worldManager);
     window.addKeyListener(keyHandler);
 
-    var worldPanel = new WorldPanel(worldManager, tileSize);
+    var worldPanel = new WorldPanel(worldManager, radius);
 
     window.addComponent(worldPanel);
 
-    window.updateWindowSize();
     window.show();
 
     while (worldManager.isRunning()) {

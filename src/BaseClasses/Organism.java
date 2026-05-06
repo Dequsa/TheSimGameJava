@@ -38,6 +38,8 @@ public abstract class Organism {
     protected Vec2 getRandomMoveVec() {
         var rand = new java.util.Random();
 
+
+
         int x  = rand.nextInt(3) - 1;
         int y = rand.nextInt(3) - 1;
 
