@@ -10,7 +10,6 @@ public abstract class Organism {
     private Vec2 position = null;
     private int age = 0;
     private boolean active = true;
-
     protected final Controller controller;
 
     public Organism(Vec2 position, Controller controller) {
@@ -18,43 +17,31 @@ public abstract class Organism {
         this.controller = controller;
     }
 
-    protected void Update() {
+    protected void update() {
         age++;
         setActive(false);
-
-        Vec2 moveVec = getRandomMoveVec();
-
-        Controller.Results action = Controller.Results.NONE;
-
-        if (controller.requestMove(this, moveVec)) {
-            action = controller.moveResults(this,  moveVec);
-        }
-
-        if (action == Controller.Results.MOVE || action == Controller.Results.FIGHT_WON) {
-            move(moveVec);
-        }
     }
 
-    protected Vec2[] getValidMoves(int y) {
+    protected Vec2[] getValidMoves(int y, int speed) {
         Vec2 []validMoves;
         if (y % 2 == 0) {
             validMoves = new Vec2[] {
-                    new Vec2(-1, -1), // Up Left
-                    new Vec2(0, -1),  // Up Right
-                    new Vec2(-1, 0),  // Left
-                    new Vec2(1, 0),   // Right
-                    new Vec2(-1, 1),  // Down Left
-                    new Vec2(0, 1),   // Down Right
+                    new Vec2(-speed, -speed), // Up Left
+                    new Vec2(0, -speed),  // Up Right
+                    new Vec2(-speed, 0),  // Left
+                    new Vec2(speed, 0),   // Right
+                    new Vec2(-speed, speed),  // Down Left
+                    new Vec2(0, speed),   // Down Right
                     new Vec2(0, 0)    // No move
             };
         } else {
             validMoves = new Vec2[] {
-                    new Vec2(0, -1),  // Up Left
-                    new Vec2(1, -1),  // Up Right
-                    new Vec2(-1, 0),  // Left
-                    new Vec2(1, 0),   // Right
-                    new Vec2(0, 1),   // Down Left
-                    new Vec2(1, 1),   // Down Right
+                    new Vec2(0, -speed),  // Up Left
+                    new Vec2(speed, -speed),  // Up Right
+                    new Vec2(-speed, 0),  // Left
+                    new Vec2(speed, 0),   // Right
+                    new Vec2(0, speed),   // Down Left
+                    new Vec2(speed, speed),   // Down Right
                     new Vec2(0, 0)    // No move
             };
         }
@@ -65,17 +52,13 @@ public abstract class Organism {
         var rand = new java.util.Random();
         int y = position.y();
 
-        Vec2[] validMoves = getValidMoves(y);
+        Vec2[] validMoves = getValidMoves(y, data.moveSpeed());
 
         int randomIndex = rand.nextInt(validMoves.length);
         return validMoves[randomIndex];
     }
 
-    protected void move(Vec2 moveVec) {
-        controller.setTile(null, position);
-        position = position.add(moveVec);
-        controller.setTile(this, position);
-    }
+    protected void move (Vec2 moveVec) {}
 
     public boolean isActive() {
         return active;
@@ -113,7 +96,7 @@ public abstract class Organism {
         return false;
     }
 
-    protected boolean specialAbility(Organism other) {return false;}
+    public boolean specialAbility(Organism other) {return false;}
 
     @Override
     public String toString() {

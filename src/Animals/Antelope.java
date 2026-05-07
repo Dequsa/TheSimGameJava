@@ -1,5 +1,4 @@
 package Animals;
-
 import BaseClasses.Organism;
 import BaseClasses.SpecialAnimal;
 import Structs.Controller;
@@ -8,19 +7,16 @@ import Structs.Types;
 import Structs.Vec2;
 import java.awt.*;
 
-public class Fox extends SpecialAnimal {
-
-    private boolean moving = false;
-
-    public Fox(Vec2 position, Controller controller) {
+public class Antelope extends SpecialAnimal {
+    public Antelope(Vec2 position, Controller controller) {
         super(position, controller);
 
-        final int FOX_STR = 5;
-        final int FOX_INIT = 7;
-        final Color FOX_COLOR = Color.ORANGE;
-        final int  FOX_MOVESPEED = 1;
+        final int ANTELOPE_STR      =   6;
+        final int ANTELOPE_INIT     =   9;
+        final Color ANTELOPE_COLOR  =   Color.MAGENTA;
+        final int  ANTELOPE_MOVESPEED = 2;
 
-        data = new OrganismData(Types.FOX, FOX_STR, FOX_INIT, FOX_MOVESPEED, FOX_COLOR);
+        data = new OrganismData(Types.ANTELOPE, ANTELOPE_STR, ANTELOPE_INIT, ANTELOPE_MOVESPEED, ANTELOPE_COLOR);
     }
 
     private boolean avoidEnemy(Organism other) {
@@ -40,13 +36,8 @@ public class Fox extends SpecialAnimal {
 
     @Override
     public boolean specialAbilityCheck(Organism other) {
-        if (isMoving()) {
-            // is moving means its attacking
-            return other.getData().str() > data.str();
-        }
-
-        // it's not moving so it's defending
-        return false;
+        // activate only if the antelope is defending
+        return !isMoving();
     }
 
     @Override

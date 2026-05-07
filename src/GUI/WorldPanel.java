@@ -75,6 +75,27 @@ public class WorldPanel extends JPanel {
         };
     }
 
+    private ComponentListener createComponentListener() {
+        return new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int currentWidth = getWidth();
+                int currentHeight = getHeight();
+                int margin = 20;
+
+                // max radius that can fit in horizontal axis from hexagons
+                double maxRadiusX = (currentWidth - (margin * 2)) / (worldManager.getMapSizeX() * Math.sqrt(3));
+
+                // max radius that can fit in vertical axis form hexagons
+                double maxRadiusY = (currentHeight - (margin * 2)) / (worldManager.getMapSizeY() * 1.5);
+
+                radius = (int) Math.min(maxRadiusX, maxRadiusY);
+
+                repaint();
+            }
+        };
+    }
+
     public WorldPanel(WorldManager worldManager, int radius) {
         this.worldManager = worldManager;
         this.radius = radius;
@@ -95,27 +116,6 @@ public class WorldPanel extends JPanel {
 
         this.setPreferredSize(new Dimension(totalWidth, totalHeight));
         this.setBackground(Color.DARK_GRAY);
-    }
-
-    private ComponentListener createComponentListener() {
-        return new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                int currentWidth = getWidth();
-                int currentHeight = getHeight();
-                int margin = 20;
-
-                // max radius that can fit in horizontal axis from hexagons
-                double maxRadiusX = (currentWidth - (margin * 2)) / (worldManager.getMapSizeX() * Math.sqrt(3));
-
-                // max radius that can fit in vertical axis form hexagons
-                double maxRadiusY = (currentHeight - (margin * 2)) / (worldManager.getMapSizeY() * 1.5);
-
-                radius = (int) Math.min(maxRadiusX, maxRadiusY);
-
-                repaint();
-            }
-        };
     }
 
     public Polygon createHexagon(int centerX, int centerY, int radius) {
@@ -161,7 +161,7 @@ public class WorldPanel extends JPanel {
                 if (o != null) {
                     g2d.setColor(o.getColor());
                     g2d.fillPolygon(hex);
-                    g2d.setColor(Color.WHITE);
+                    g2d.setColor(Color.BLACK);
                     g2d.drawPolygon(hex);
                 }
             }

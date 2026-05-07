@@ -1,8 +1,7 @@
 package BaseClasses;
 
-import Animals.Fox;
-import Animals.Sheep;
-import Animals.Wolf;
+import Animals.*;
+import Plants.Grass;
 import Structs.Controller;
 import Structs.Types;
 import Structs.Vec2;
@@ -19,7 +18,7 @@ public class WorldManager implements Controller {
     private final ArrayList<Organism> toAdd = new ArrayList<>();
     private final ArrayList<Organism> toRemove = new ArrayList<>();
 
-    enum ColisionType {
+    enum CollisionType {
         EMPTY,
         REPRODUCE,
         FIGHT
@@ -60,19 +59,19 @@ public class WorldManager implements Controller {
     }
 
 
-    private ColisionType isOccupied(Vec2 newPosition, Types type) {
+    private CollisionType isOccupied(Vec2 newPosition, Types type) {
         var target = worldMap[newPosition.x()][newPosition.y()];
 
         if (target == null) {
-            return ColisionType.EMPTY;
+            return CollisionType.EMPTY;
         }
 
         if (target.getData().type() == type) {
-            return ColisionType.REPRODUCE;
+            return CollisionType.REPRODUCE;
         }
 
         // target is an enemy
-        return ColisionType.FIGHT;
+        return CollisionType.FIGHT;
     }
 
     private Vec2 getRandomPosition() {
@@ -83,7 +82,7 @@ public class WorldManager implements Controller {
             var y = rand.nextInt(worldMap[0].length);
             var pos = new Vec2(x, y);
 
-            if (isOccupied(pos, Types.NONE) == ColisionType.EMPTY) {
+            if (isOccupied(pos, Types.NONE) == CollisionType.EMPTY) {
                 return new Vec2(x, y);
             }
         }
@@ -130,6 +129,9 @@ public class WorldManager implements Controller {
             Types type = Types.values()[type_id];
             var childPosition = getRandomPosition();
             var child = spawnOrganism(childPosition, type);
+
+            if (child == null ) continue;
+
             addToWorld(child);
         }
     }
@@ -157,6 +159,15 @@ public class WorldManager implements Controller {
             }
             case FOX -> {
                 return new Fox(pos, this);
+            }
+            case TURTLE -> {
+                return new Turtle(pos, this);
+            }
+            case ANTELOPE -> {
+                return new Antelope(pos, this);
+            }
+            case GRASS -> {
+                return new Grass(pos, this);
             }
             default -> {
                 return null;
@@ -211,8 +222,25 @@ public class WorldManager implements Controller {
             if (!organism.isActive()) {
                 continue;
             }
-            organism.Update();
+            organism.update();
         }
+    }
+
+    private Boolean makeChild (Organism o, Organism target) {
+        Organism []orgs = new Organism[2];
+        orgs[0] = o;
+        orgs[1] = target;
+
+        var child = reproduce(orgs);
+
+        // he can't move as he didn't make a child but there is still a thing on this tile
+        if (child == null) {
+            return false;
+        }
+
+        addToWorld(child);
+
+        return true;
     }
 
     private Organism reproduce(Organism []orgs) {
@@ -252,22 +280,18 @@ public class WorldManager implements Controller {
 
         if (attacker.specialAbilityCheck(defender)) {
 
-            // couldn't use special no space or sum else
-            if (!attacker.specialAbility(defender)) {
-                return FightResults.DEFENDER_WIN;
+            if (attacker.specialAbility(defender)) {
+                return FightResults.ATTACKER_SPECIAL;
             }
-
-            return FightResults.ATTACKER_SPECIAL;
+            return FightResults.DEFENDER_WIN;
         }
 
         if (defender.specialAbilityCheck(attacker)) {
-
             // couldn't defend sum happen
-            if (!defender.specialAbility(attacker)) {
-                return FightResults.ATTACKER_WIN;
+            if (defender.specialAbility(attacker)) {
+                return FightResults.DEFENDER_SPECIAL;
             }
-
-            return FightResults.DEFENDER_SPECIAL;
+            return FightResults.ATTACKER_WIN;
         }
 
         if (winner == attacker) {
@@ -322,25 +346,42 @@ public class WorldManager implements Controller {
                 }
             }
             case REPRODUCE -> {
-                Organism []orgs = new Organism[2];
-                orgs[0] = o;
-                orgs[1] = target;
-
-                var child = reproduce(orgs);
-
-                // he can't move as he didn't make a child but there is still a thing on this tile
-                if (child == null) {
-                    return Results.NONE;
+                if (makeChild(o, target)) {
+                    return Results.REPRODUCE;
                 }
 
-                addToWorld(child);
-
-                return Results.REPRODUCE;
+                return Results.NONE;
             }
             default -> {
                 return Results.MOVE;
             }
         }
+    }
+
+    @Override
+    public Results sowingResults(Organism o, Vec2 moveVec) {
+        if (o == null) {
+            System.out.println("The sower is null.");
+            return Results.NONE;
+        }
+
+        Organism target = worldMap[o.getPosition().add(moveVec).x()][o.getPosition().add(moveVec).y()];
+
+        // if empty then sow
+        if (target == null) {
+            if (makeChild(o, null)) {
+                return Results.REPRODUCE;
+            }
+
+            return Results.NONE;
+        }
+
+        // do nothing if it's the same guy you want to sow into
+        if (target.getData().type() == o.getData().type()) {
+            return Results.NONE;
+        }
+
+        return moveResults(o, moveVec);
     }
 
     @Override
