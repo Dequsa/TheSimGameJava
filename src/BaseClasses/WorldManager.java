@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class WorldManager implements Controller {
     private boolean isRunning = true;
-    private boolean turnRequested =  false;
+    private boolean turnRequested = false;
     private final Random rand = new Random(); // randomizer
     private final ArrayList<Organism> organisms;
     private final Organism[][] worldMap;
@@ -130,7 +130,7 @@ public class WorldManager implements Controller {
             var childPosition = getRandomPosition();
             var child = spawnOrganism(childPosition, type);
 
-            if (child == null ) continue;
+            if (child == null) continue;
 
             addToWorld(child);
         }
@@ -184,7 +184,7 @@ public class WorldManager implements Controller {
     }
 
     private void sortOrganisms() {
-        organisms.sort((a,b) -> {
+        organisms.sort((a, b) -> {
 
             if (a == b) return 0;
 
@@ -192,7 +192,7 @@ public class WorldManager implements Controller {
 
             if (initCompare != 0) return -initCompare;
 
-            return  Integer.compare(a.getAge(), b.getAge());
+            return Integer.compare(a.getAge(), b.getAge());
 
         });
     }
@@ -226,8 +226,8 @@ public class WorldManager implements Controller {
         }
     }
 
-    private Boolean makeChild (Organism o, Organism target) {
-        Organism []orgs = new Organism[2];
+    private Boolean makeChild(Organism o, Organism target) {
+        Organism[] orgs = new Organism[2];
         orgs[0] = o;
         orgs[1] = target;
 
@@ -243,7 +243,7 @@ public class WorldManager implements Controller {
         return true;
     }
 
-    private Organism reproduce(Organism []orgs) {
+    private Organism reproduce(Organism[] orgs) {
         for (var org : orgs) {
             if (org == null) {
                 return null;
@@ -298,7 +298,7 @@ public class WorldManager implements Controller {
             return FightResults.ATTACKER_WIN;
         }
 
-        return  FightResults.DEFENDER_WIN;
+        return FightResults.DEFENDER_WIN;
     }
 
     @Override
@@ -329,21 +329,9 @@ public class WorldManager implements Controller {
             return Results.MOVE;
         }
 
-        switch(isOccupied(target.getPosition(), o.data.type())) {
+        switch (isOccupied(target.getPosition(), o.data.type())) {
             case FIGHT -> {
-                switch (fight(o, target)) {
-                    case ATTACKER_WIN -> {
-                        removeFromWorld(target);
-                        return Results.FIGHT_WON;
-                    }
-                    case DEFENDER_WIN -> {
-                        removeFromWorld(o);
-                        return Results.FIGHT_LOST;
-                    }
-                    default -> { // its also for special abilities use
-                        return Results.NONE;
-                    }
-                }
+                return getFightResults(o, target);
             }
             case REPRODUCE -> {
                 if (makeChild(o, target)) {
@@ -356,6 +344,10 @@ public class WorldManager implements Controller {
                 return Results.MOVE;
             }
         }
+    }
+
+    private boolean checkIfIsAnimal(Organism target) {
+        return target.getData().type().ordinal() <= Types.GRASS.ordinal();
     }
 
     @Override
@@ -376,19 +368,39 @@ public class WorldManager implements Controller {
             return Results.NONE;
         }
 
-        // do nothing if it's the same guy you want to sow into
+        // do nothing if it's the same type you want to sow into
         if (target.getData().type() == o.getData().type()) {
             return Results.NONE;
         }
 
-        return moveResults(o, moveVec);
+        // fight
+        if (target.getData().type() != o.getData().type() && checkIfIsAnimal(target)) {
+            return getFightResults(o, target);
+        }
+        return null;
+    }
+
+    private Results getFightResults(Organism o, Organism target) {
+        switch (fight(o, target)) {
+            case ATTACKER_WIN -> {
+                removeFromWorld(target);
+                return Results.FIGHT_WON;
+            }
+            case DEFENDER_WIN -> {
+                removeFromWorld(o);
+                return Results.FIGHT_LOST;
+            }
+            default -> { // its also for special abilities use
+                return Results.NONE;
+            }
+        }
     }
 
     @Override
     public void setTile(Organism o, Vec2 position) {
         worldMap[position.x()][position.y()] = o;
     }
-    
+
     public Organism[][] getWorldMap() {
         return worldMap;
     }
