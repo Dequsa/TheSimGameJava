@@ -1,4 +1,6 @@
 import BaseClasses.*;
+import GUI.GridDisplay.HexagonPanel;
+import GUI.GridDisplay.SquarePanel;
 import GUI.WindowInstance;
 import GUI.WorldPanel;
 import Input.InputHandler;
@@ -11,7 +13,7 @@ public class Main {
 
     int radius = 20;
     int organismCount = 0;
-    GridType gridType = GridType.HEXAGON;
+    GridType gridType = GridType.SQUARE;
 
     WorldManager worldManager = new WorldManager(gridType,organismCount, radius);
 
@@ -20,7 +22,16 @@ public class Main {
     var keyHandler = new InputHandler(worldManager);
     window.addKeyListener(keyHandler);
 
-    var worldPanel = new WorldPanel(worldManager, radius);
+    WorldPanel worldPanel = null;
+
+    switch (gridType) {
+      case SQUARE ->  {
+        worldPanel = new SquarePanel(worldManager, radius);
+      }
+      case HEXAGON ->  {
+        worldPanel = new HexagonPanel(worldManager,radius);
+      }
+    }
 
     window.addComponent(worldPanel);
 
