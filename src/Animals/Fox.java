@@ -6,14 +6,16 @@ import Structs.Controller;
 import Structs.OrganismData;
 import Structs.Types;
 import Structs.Vec2;
+import movementHandler.GridType;
+
 import java.awt.*;
 
 public class Fox extends SpecialAnimal {
 
     private boolean moving = false;
 
-    public Fox(Vec2 position, Controller controller) {
-        super(position, controller);
+    public Fox(Vec2 position, Controller controller, GridType gridType) {
+        super(position, controller, gridType);
 
         final int FOX_STR = 5;
         final int FOX_INIT = 7;

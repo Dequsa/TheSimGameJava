@@ -1,13 +1,14 @@
 package BaseClasses;
 import Structs.Controller;
 import Structs.Vec2;
+import movementHandler.GridType;
 
 public abstract class Plant extends Organism{
     protected final int PLANT_INIT = 0;
     protected final int PLANT_MOVESPEED = 1;
 
-    public Plant(Vec2 position, Controller controller) {
-        super(position, controller);
+    public Plant(Vec2 position, Controller controller, GridType gridType) {
+        super(position, controller, gridType);
     }
 
     @Override

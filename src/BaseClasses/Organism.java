@@ -2,6 +2,10 @@ package BaseClasses;
 import Structs.Controller;
 import Structs.OrganismData;
 import Structs.Vec2;
+import movementHandler.SquareMovement;
+import movementHandler.GridType;
+import movementHandler.HexagonMovement;
+import movementHandler.movementType;
 
 import java.awt.*;
 
@@ -11,10 +15,20 @@ public abstract class Organism {
     private int age = 0;
     private boolean active = true;
     protected final Controller controller;
+    protected movementType movementHandler;
 
-    public Organism(Vec2 position, Controller controller) {
+    public Organism(Vec2 position, Controller controller, GridType gridType) {
         this.position = position;
         this.controller = controller;
+
+        switch (gridType) {
+            case HEXAGON:
+                movementHandler = new HexagonMovement();
+                break;
+            case SQUARE:
+                movementHandler = new SquareMovement();
+        }
+
     }
 
     protected void update() {
@@ -22,37 +36,11 @@ public abstract class Organism {
         setActive(false);
     }
 
-    protected Vec2[] getValidMoves(int y, int speed) {
-        Vec2 []validMoves;
-        if (y % 2 == 0) {
-            validMoves = new Vec2[] {
-                    new Vec2(-speed, -speed), // Up Left
-                    new Vec2(0, -speed),  // Up Right
-                    new Vec2(-speed, 0),  // Left
-                    new Vec2(speed, 0),   // Right
-                    new Vec2(-speed, speed),  // Down Left
-                    new Vec2(0, speed),   // Down Right
-                    new Vec2(0, 0)    // No move
-            };
-        } else {
-            validMoves = new Vec2[] {
-                    new Vec2(0, -speed),  // Up Left
-                    new Vec2(speed, -speed),  // Up Right
-                    new Vec2(-speed, 0),  // Left
-                    new Vec2(speed, 0),   // Right
-                    new Vec2(0, speed),   // Down Left
-                    new Vec2(speed, speed),   // Down Right
-                    new Vec2(0, 0)    // No move
-            };
-        }
-        return validMoves;
-    }
-
     protected Vec2 getRandomMoveVec() {
         var rand = new java.util.Random();
         int y = position.y();
 
-        Vec2[] validMoves = getValidMoves(y, data.moveSpeed());
+        Vec2[] validMoves = movementHandler.getValidMoves(y, data.moveSpeed());
 
         int randomIndex = rand.nextInt(validMoves.length);
         return validMoves[randomIndex];

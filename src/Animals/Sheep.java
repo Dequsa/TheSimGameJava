@@ -5,12 +5,13 @@ import Structs.Controller;
 import Structs.OrganismData;
 import Structs.Types;
 import Structs.Vec2;
+import movementHandler.GridType;
 
 import java.awt.*;
 
 public class Sheep extends Animal {
-    public Sheep(Vec2 position, Controller controller) {
-        super(position, controller);
+    public Sheep(Vec2 position, Controller controller, GridType gridType) {
+        super(position, controller, gridType);
 
         final int SHEEP_STR = 4;
         final int SHEEP_INIT = 7;

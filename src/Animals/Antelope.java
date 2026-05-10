@@ -5,11 +5,13 @@ import Structs.Controller;
 import Structs.OrganismData;
 import Structs.Types;
 import Structs.Vec2;
+import movementHandler.GridType;
+
 import java.awt.*;
 
 public class Antelope extends SpecialAnimal {
-    public Antelope(Vec2 position, Controller controller) {
-        super(position, controller);
+    public Antelope(Vec2 position, Controller controller, GridType gridType) {
+        super(position, controller, gridType);
 
         final int ANTELOPE_STR      =   6;
         final int ANTELOPE_INIT     =   9;

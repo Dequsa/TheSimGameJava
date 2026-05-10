@@ -5,13 +5,14 @@ import Structs.Controller;
 import Structs.OrganismData;
 import Structs.Types;
 import Structs.Vec2;
+import movementHandler.GridType;
 
 import java.awt.*;
 
 public class Turtle extends SpecialAnimal {
 
-    public Turtle(Vec2 position, Controller controller) {
-        super(position, controller);
+    public Turtle(Vec2 position, Controller controller, GridType gridType) {
+        super(position, controller, gridType);
 
         final int TURTLE_STR = 2;
         final int TURTLE_INIT = 2;

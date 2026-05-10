@@ -2,6 +2,7 @@ import BaseClasses.*;
 import GUI.WindowInstance;
 import GUI.WorldPanel;
 import Input.InputHandler;
+import movementHandler.GridType;
 
 public class Main {
   void main() {
@@ -9,9 +10,10 @@ public class Main {
     int defaultWinSizeY = 600;
 
     int radius = 20;
-    int organismCount = 10;
+    int organismCount = 0;
+    GridType gridType = GridType.HEXAGON;
 
-    WorldManager worldManager = new WorldManager(organismCount, radius);
+    WorldManager worldManager = new WorldManager(gridType,organismCount, radius);
 
     var window = new WindowInstance(defaultWinSizeX, defaultWinSizeY);
 
