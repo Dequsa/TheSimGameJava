@@ -5,11 +5,13 @@ import Plants.Grass;
 import Structs.Controller;
 import Structs.Types;
 import Structs.Vec2;
+import movementHandler.GridType;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class WorldManager implements Controller {
+    private final GridType gridType;
     private boolean isRunning = true;
     private boolean turnRequested = false;
     private final Random rand = new Random(); // randomizer
@@ -24,7 +26,9 @@ public class WorldManager implements Controller {
         FIGHT
     }
 
-    public WorldManager(int organismCount, int mapSize) {
+    public WorldManager(GridType gridType, int organismCount, int mapSize) {
+        this.gridType = gridType;
+
         if (mapSize <= 0) {
             mapSize = 10;
         }
@@ -152,22 +156,22 @@ public class WorldManager implements Controller {
 
         switch (type) {
             case WOLF -> {
-                return new Wolf(pos, this);
+                return new Wolf(pos, this, gridType);
             }
             case SHEEP -> {
-                return new Sheep(pos, this);
+                return new Sheep(pos, this, gridType);
             }
             case FOX -> {
-                return new Fox(pos, this);
+                return new Fox(pos, this, gridType);
             }
             case TURTLE -> {
-                return new Turtle(pos, this);
+                return new Turtle(pos, this, gridType);
             }
             case ANTELOPE -> {
-                return new Antelope(pos, this);
+                return new Antelope(pos, this, gridType);
             }
             case GRASS -> {
-                return new Grass(pos, this);
+                return new Grass(pos, this, gridType);
             }
             default -> {
                 return null;
@@ -286,6 +290,10 @@ public class WorldManager implements Controller {
             return FightResults.DEFENDER_WIN;
         }
 
+        if (winner == defender) {
+            return FightResults.DEFENDER_WIN;
+        }
+
         if (defender.specialAbilityCheck(attacker)) {
             // couldn't defend sum happen
             if (defender.specialAbility(attacker)) {
@@ -346,10 +354,6 @@ public class WorldManager implements Controller {
         }
     }
 
-    private boolean checkIfIsAnimal(Organism target) {
-        return target.getData().type().ordinal() <= Types.GRASS.ordinal();
-    }
-
     @Override
     public Results sowingResults(Organism o, Vec2 moveVec) {
         if (o == null) {
@@ -357,27 +361,17 @@ public class WorldManager implements Controller {
             return Results.NONE;
         }
 
-        Organism target = worldMap[o.getPosition().add(moveVec).x()][o.getPosition().add(moveVec).y()];
+        Vec2 targetPosition = o.getPosition().add(moveVec);
 
-        // if empty then sow
-        if (target == null) {
+        if (isOccupied(targetPosition, o.data.type()) == CollisionType.FIGHT){
+            Organism  target = worldMap[targetPosition.x()][targetPosition.y()];
+            return getFightResults(o, target);
+        } else {
             if (makeChild(o, null)) {
                 return Results.REPRODUCE;
             }
-
             return Results.NONE;
         }
-
-        // do nothing if it's the same type you want to sow into
-        if (target.getData().type() == o.getData().type()) {
-            return Results.NONE;
-        }
-
-        // fight
-        if (target.getData().type() != o.getData().type() && checkIfIsAnimal(target)) {
-            return getFightResults(o, target);
-        }
-        return null;
     }
 
     private Results getFightResults(Organism o, Organism target) {

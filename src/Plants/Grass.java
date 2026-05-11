@@ -1,17 +1,17 @@
 package Plants;
-import BaseClasses.Organism;
 import BaseClasses.Plant;
 import Structs.Controller;
 import Structs.OrganismData;
 import Structs.Types;
 import Structs.Vec2;
+import movementHandler.GridType;
 
 import java.awt.*;
 
 public class Grass extends Plant{
 
-    public Grass(Vec2 position, Controller controller) {
-        super(position, controller);
+    public Grass(Vec2 position, Controller controller, GridType gridType) {
+        super(position, controller, gridType);
 
         final int GRASS_STR = 0;
         final Color GRASS_COLOR = new Color(136, 231, 136, 255);
