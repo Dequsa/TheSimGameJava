@@ -1,7 +1,7 @@
 package GUI.GridDisplay;
 
 import BaseClasses.Organism;
-import BaseClasses.WorldManager;
+import WorldManager.WorldManager;
 import GUI.WorldPanel;
 import Structs.Types;
 

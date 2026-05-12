@@ -10,10 +10,10 @@ public abstract class Animal extends Organism {
     }
 
     @Override
-    protected void update() {
+    public void update() {
         super.update();
 
-        Vec2 moveVec = getRandomMoveVec();
+        Vec2 moveVec = determineMove();
 
         Controller.MoveResults action = Controller.MoveResults.NONE;
 

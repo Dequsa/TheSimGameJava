@@ -1,6 +1,7 @@
 package BaseClasses;
 
 import Structs.Controller;
+import Structs.Direction;
 import Structs.Vec2;
 import movementHandler.GridType;
 

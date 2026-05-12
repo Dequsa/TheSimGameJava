@@ -14,9 +14,11 @@ public interface Controller {
 
     MoveResults moveResults(Organism o, Vec2 moveVec);
 
-    MoveResults sowingResults(Organism o, Vec2 moveVec, boolean isAOE);
+    MoveResults sowingResults(Organism o, Vec2 moveVec, boolean isAOE, boolean sowing);
 
     boolean checkSafeTiles(Vec2 oPosition, Vec2 moveVec);
 
     void setTile(Organism o, Vec2 position);
+
+    void removeOrganism(Organism target);
 }

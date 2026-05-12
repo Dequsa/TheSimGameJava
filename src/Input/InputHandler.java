@@ -1,6 +1,7 @@
 package Input;
 
-import BaseClasses.WorldManager;
+import WorldManager.WorldManager;
+import Structs.Direction;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -19,23 +20,23 @@ public class InputHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
-        switch (keyCode) {
-            case KeyEvent.VK_ENTER: {
-                worldManager.setTurnRequested(true);
-                System.out.println("Enter pressed");
-                break;
-            }
-            case KeyEvent.VK_ESCAPE: {
-                // close the program
-                worldManager.setRunning(false);
-                System.out.println("Escape pressed");
-                System.exit(0);
-            }
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_Q -> worldManager.setNextMoveDirection(Direction.UP_LEFT);
+            case KeyEvent.VK_W -> worldManager.setNextMoveDirection(Direction.UP);
+            case KeyEvent.VK_E -> worldManager.setNextMoveDirection(Direction.UP_RIGHT);
+            case KeyEvent.VK_A -> worldManager.setNextMoveDirection(Direction.LEFT);
+            case KeyEvent.VK_SPACE, KeyEvent.VK_S -> worldManager.setNextMoveDirection(Direction.NONE);
+            case KeyEvent.VK_D -> worldManager.setNextMoveDirection(Direction.RIGHT);
+            case KeyEvent.VK_Z -> worldManager.setNextMoveDirection(Direction.DOWN_LEFT);
+            case KeyEvent.VK_X -> worldManager.setNextMoveDirection(Direction.DOWN);
+            case KeyEvent.VK_C -> worldManager.setNextMoveDirection(Direction.DOWN_RIGHT);
+            case KeyEvent.VK_F -> worldManager.setNextMoveDirection(Direction.SPECIAL);
         }
+        worldManager.setTurnRequested(true); // Call this once at the end!
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-
+        
     }
 }

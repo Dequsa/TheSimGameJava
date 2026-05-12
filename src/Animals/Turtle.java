@@ -23,7 +23,7 @@ public class Turtle extends SpecialAnimal {
     }
 
     @Override
-    protected Vec2 getRandomMoveVec() {
+    protected Vec2 determineMove() {
         var rand = new java.util.Random();
         double CHANCE_TO_MOVE = 0.2;
 
@@ -31,7 +31,7 @@ public class Turtle extends SpecialAnimal {
             return new Vec2(0, 0);
         }
 
-        return super.getRandomMoveVec();
+        return super.determineMove();
     }
 
     @Override

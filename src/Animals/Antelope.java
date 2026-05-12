@@ -1,10 +1,7 @@
 package Animals;
 import BaseClasses.Organism;
 import BaseClasses.SpecialAnimal;
-import Structs.Controller;
-import Structs.OrganismData;
-import Structs.Types;
-import Structs.Vec2;
+import Structs.*;
 import movementHandler.GridType;
 
 import java.awt.*;

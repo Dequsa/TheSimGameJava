@@ -1,6 +1,6 @@
 package GUI;
 
-import BaseClasses.WorldManager;
+import WorldManager.WorldManager;
 import Structs.Types;
 
 import javax.swing.*;

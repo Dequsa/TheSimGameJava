@@ -1,9 +1,9 @@
-import BaseClasses.*;
 import GUI.GridDisplay.HexagonPanel;
 import GUI.GridDisplay.SquarePanel;
 import GUI.WindowInstance;
 import GUI.WorldPanel;
 import Input.InputHandler;
+import WorldManager.WorldManager;
 import movementHandler.GridType;
 
 public class Main {
@@ -13,7 +13,7 @@ public class Main {
 
     int radius = 20;
     int organismCount = 0;
-    GridType gridType = GridType.SQUARE;
+    GridType gridType = GridType.HEXAGON;
 
     WorldManager worldManager = new WorldManager(gridType,organismCount, radius);
 

@@ -1,5 +1,6 @@
 package BaseClasses;
 import Structs.Controller;
+import Structs.Direction;
 import Structs.OrganismData;
 import Structs.Vec2;
 import movementHandler.SquareMovement;
@@ -10,6 +11,7 @@ import movementHandler.movementType;
 import java.awt.*;
 
 public abstract class Organism {
+    protected boolean controllable = false;
     protected OrganismData data;
     private Vec2 position = null;
     private int age = 0;
@@ -31,12 +33,12 @@ public abstract class Organism {
 
     }
 
-    protected void update() {
+    public void update() {
         age++;
         setActive(false);
     }
 
-    protected Vec2 getRandomMoveVec() {
+    protected Vec2 determineMove() {
         var rand = new java.util.Random();
         int y = position.y();
 
@@ -97,4 +99,14 @@ public abstract class Organism {
     public String toString() {
         return data.type().name() + " at: " + position.toString() + " age: " + age;
     }
+
+    public boolean isControllable() {
+        return controllable;
+    }
+
+    public void setControllable(boolean controllable) {
+        this.controllable = controllable;
+    }
+
+    public void setMoveDirection(Direction dir) {}
 }

@@ -29,18 +29,16 @@ public class SowThistle extends Plant {
     @Override
     protected void handleSowing(Vec2 moveVec) {
         var rand = new java.util.Random();
+        boolean sowing = false;
+
         for (int i = 0; i < AMOUNT_OF_CHANCES; i++) {
             if (rand.nextDouble() < this.CHANCE_TO_SOW) {
-                Controller.MoveResults results = controller.sowingResults(this, moveVec, false);
-
-                /* it did it's part it can rest now */
-                if (!canSow(results)) return;
+                sowing = true;
             }
-        }
-    }
+            Controller.MoveResults results = controller.sowingResults(this, moveVec, false, sowing);
 
-    @Override
-    protected void update() {
-        super.update();
+            /* it did it's part it can rest now */
+            if (!canSow(results)) return;
+        }
     }
 }

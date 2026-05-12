@@ -1,10 +1,15 @@
-package BaseClasses;
+package WorldManager;
 
 import Animals.*;
+import Animals.Human.Human;
+import BaseClasses.Organism;
 import Plants.Grass;
 import Plants.SowThistle;
+import Plants.SpecialPlants.Belladonna;
 import Plants.SpecialPlants.Guarma;
+import Plants.SpecialPlants.Hogweed;
 import Structs.Controller;
+import Structs.Direction;
 import Structs.Types;
 import Structs.Vec2;
 import movementHandler.GridType;
@@ -19,12 +24,21 @@ public class WorldManager implements Controller {
     private final GridType gridType;
     private boolean isRunning = true;
     private boolean turnRequested = false;
+    private Direction nextMoveDirection = Direction.NONE;
     private final Random rand = new Random(); // randomizer
     private movementType positionFinder = null;
     private final ArrayList<Organism> organisms;
     private final Organism[][] worldMap;
     private final ArrayList<Organism> toAdd = new ArrayList<>();
     private final ArrayList<Organism> toRemove = new ArrayList<>();
+
+    public Direction getNextMoveDirection() {
+        return nextMoveDirection;
+    }
+
+    public void setNextMoveDirection(Direction nextMoveDirection) {
+        this.nextMoveDirection = nextMoveDirection;
+    }
 
     enum CollisionType {
         EMPTY,
@@ -77,7 +91,7 @@ public class WorldManager implements Controller {
     }
 
 
-    private CollisionType isOccupied(Vec2 newPosition, Types type) {
+    private CollisionType getCollisionType(Vec2 newPosition, Types type) {
         var target = worldMap[newPosition.x()][newPosition.y()];
 
         if (target == null) {
@@ -92,6 +106,15 @@ public class WorldManager implements Controller {
         return CollisionType.FIGHT;
     }
 
+    private boolean isOccupied(Vec2 pos) {
+        if (pos == null) return true;
+
+        if (isOutOfBounds(pos)) return true;
+
+        Organism target = worldMap[pos.x()][pos.y()];
+        return target != null;
+    }
+
     private Vec2 getRandomPosition() {
         int maxTries = 5;
 
@@ -100,7 +123,7 @@ public class WorldManager implements Controller {
             var y = rand.nextInt(worldMap[0].length);
             var pos = new Vec2(x, y);
 
-            if (isOccupied(pos, Types.NONE) == CollisionType.EMPTY) {
+            if (getCollisionType(pos, Types.NONE) == CollisionType.EMPTY) {
                 return new Vec2(x, y);
             }
         }
@@ -110,9 +133,9 @@ public class WorldManager implements Controller {
     private Vec2 getChildPosition(Vec2 pos) {
         final int BIRTH_RADIUS = 1;
 
-        Vec2 [] possible_relative_positions = positionFinder.getValidMoves(pos.y(), BIRTH_RADIUS);
+        Vec2[] possible_relative_positions = positionFinder.getValidMoves(pos.y(), BIRTH_RADIUS);
 
-        Vec2 [] valid_positions = new Vec2[possible_relative_positions.length];
+        Vec2[] valid_positions = new Vec2[possible_relative_positions.length];
 
         int i = 0;
         for (var relative_pos : possible_relative_positions) {
@@ -173,6 +196,9 @@ public class WorldManager implements Controller {
         }
 
         switch (type) {
+            case HUMAN -> {
+                return new Human(pos, this, gridType);
+            }
             case WOLF -> {
                 return new Wolf(pos, this, gridType);
             }
@@ -196,6 +222,12 @@ public class WorldManager implements Controller {
             }
             case SOWTHISTLE -> {
                 return new SowThistle(pos, this, gridType);
+            }
+            case BELLADONNA -> {
+                return new Belladonna(pos, this, gridType);
+            }
+            case HOGWEED -> {
+                return new Hogweed(pos, this, gridType);
             }
             default -> {
                 return null;
@@ -250,6 +282,12 @@ public class WorldManager implements Controller {
             if (!organism.isActive()) {
                 continue;
             }
+
+            if (organism.isControllable()) {
+                System.out.println("Setting key of: " + organism + " to " + nextMoveDirection);
+                organism.setMoveDirection(nextMoveDirection);
+            }
+
             organism.update();
         }
     }
@@ -284,7 +322,7 @@ public class WorldManager implements Controller {
                 continue;
             }
 
-            Types parentRace = org.data.type();
+            Types parentRace = org.getData().type();
             return spawnOrganism(childPosition, parentRace);
         }
         return null;
@@ -302,7 +340,7 @@ public class WorldManager implements Controller {
     private FightResults fight(Organism attacker, Organism defender) {
         if (attacker == defender || attacker == null || defender == null) return null;
 
-        var winner = attacker.data.str() >= defender.data.str() ? attacker : defender;
+        var winner = attacker.getData().str() >= defender.getData().str() ? attacker : defender;
 
         attacker.setActive(false);
         defender.setActive(false);
@@ -333,6 +371,12 @@ public class WorldManager implements Controller {
     }
 
     @Override
+    public void removeOrganism(Organism target) {
+        if (target == null) return;
+        removeFromWorld(target);
+    }
+
+    @Override
     public boolean requestMove(Organism o, Vec2 moveVec) {
         if (o == null) {
             return false;
@@ -360,7 +404,7 @@ public class WorldManager implements Controller {
             return MoveResults.MOVE;
         }
 
-        switch (isOccupied(target.getPosition(), o.data.type())) {
+        switch (getCollisionType(target.getPosition(), o.getData().type())) {
             case FIGHT -> {
                 return getFightResults(o, target);
             }
@@ -378,11 +422,27 @@ public class WorldManager implements Controller {
     }
 
     private void aoeAttack(Organism attacker) {
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                if (x == 0 && y == 0) continue;
 
+                Vec2 checkPosition = attacker.getPosition().add(new Vec2(x, y));
+
+                if (isOutOfBounds(checkPosition)) continue;
+                if (isOccupied(checkPosition)) {
+
+                    Organism target = worldMap[checkPosition.x()][checkPosition.y()];
+                    if (target.getData().type().ordinal() > Types.GRASS.ordinal()) continue;
+
+                    System.out.println(target + " got hit by an AOE attack!");
+                    removeFromWorld(target);
+                }
+            }
+        }
     }
 
     @Override
-    public MoveResults sowingResults(Organism o, Vec2 moveVec, boolean isAOE) {
+    public MoveResults sowingResults(Organism o, Vec2 moveVec, boolean isAOE, boolean sowing) {
         if (o == null) {
             System.out.println("The sower is null.");
             return MoveResults.NONE;
@@ -390,19 +450,18 @@ public class WorldManager implements Controller {
 
         Vec2 targetPosition = o.getPosition().add(moveVec);
 
-        if (isOccupied(targetPosition, o.data.type()) == CollisionType.FIGHT){
-            if (isAOE) {
-                aoeAttack(o);
-            }
-            return MoveResults.NONE;
-//            Organism  target = worldMap[targetPosition.x()][targetPosition.y()];
-//            return getFightResults(o, target);
-        } else {
-            if (makeChild(o, null)) {
-                return MoveResults.REPRODUCE;
-            }
-            return MoveResults.NONE;
+        if (isAOE) {
+            aoeAttack(o);
         }
+
+        if (sowing) {
+            if (getCollisionType(targetPosition, o.getData().type()) != CollisionType.FIGHT) {
+                if (makeChild(o, null)) {
+                    return MoveResults.REPRODUCE;
+                }
+            }
+        }
+        return MoveResults.NONE;
     }
 
     private MoveResults getFightResults(Organism o, Organism target) {
@@ -415,7 +474,7 @@ public class WorldManager implements Controller {
                 removeFromWorld(o);
                 return MoveResults.FIGHT_LOST;
             }
-            default -> { // its also for special abilities use
+            case null, default -> { // its also for special abilities use
                 return MoveResults.NONE;
             }
         }
