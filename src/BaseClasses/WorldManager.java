@@ -2,6 +2,7 @@ package BaseClasses;
 
 import Animals.*;
 import Plants.Grass;
+import Plants.SowThistle;
 import Plants.SpecialPlants.Guarma;
 import Structs.Controller;
 import Structs.Types;
@@ -193,6 +194,9 @@ public class WorldManager implements Controller {
             case GUARMA -> {
                 return new Guarma(pos, this, gridType);
             }
+            case SOWTHISTLE -> {
+                return new SowThistle(pos, this, gridType);
+            }
             default -> {
                 return null;
             }
@@ -296,6 +300,8 @@ public class WorldManager implements Controller {
     // true attacker won he can move to next tile
     // false attacker lost and he died
     private FightResults fight(Organism attacker, Organism defender) {
+        if (attacker == defender || attacker == null || defender == null) return null;
+
         var winner = attacker.data.str() >= defender.data.str() ? attacker : defender;
 
         attacker.setActive(false);
@@ -307,6 +313,7 @@ public class WorldManager implements Controller {
             if (attacker.specialAbility(defender)) {
                 return FightResults.ATTACKER_SPECIAL;
             }
+            // failed in special attacking
             return FightResults.DEFENDER_WIN;
         }
 
@@ -315,10 +322,10 @@ public class WorldManager implements Controller {
         }
 
         if (defender.specialAbilityCheck(attacker)) {
-            // couldn't defend sum happen
             if (defender.specialAbility(attacker)) {
                 return FightResults.DEFENDER_SPECIAL;
             }
+            // couldn't defend something happen
             return FightResults.ATTACKER_WIN;
         }
 
@@ -345,12 +352,12 @@ public class WorldManager implements Controller {
     }
 
     @Override
-    public Results moveResults(Organism o, Vec2 moveVec) {
+    public MoveResults moveResults(Organism o, Vec2 moveVec) {
         Vec2 targetPosition = o.getPosition().add(moveVec);
         Organism target = worldMap[targetPosition.x()][targetPosition.y()];
 
         if (target == null || target == o) {
-            return Results.MOVE;
+            return MoveResults.MOVE;
         }
 
         switch (isOccupied(target.getPosition(), o.data.type())) {
@@ -359,49 +366,57 @@ public class WorldManager implements Controller {
             }
             case REPRODUCE -> {
                 if (makeChild(o, target)) {
-                    return Results.REPRODUCE;
+                    return MoveResults.REPRODUCE;
                 }
 
-                return Results.NONE;
+                return MoveResults.NONE;
             }
             default -> {
-                return Results.MOVE;
+                return MoveResults.MOVE;
             }
         }
     }
 
+    private void aoeAttack(Organism attacker) {
+
+    }
+
     @Override
-    public Results sowingResults(Organism o, Vec2 moveVec) {
+    public MoveResults sowingResults(Organism o, Vec2 moveVec, boolean isAOE) {
         if (o == null) {
             System.out.println("The sower is null.");
-            return Results.NONE;
+            return MoveResults.NONE;
         }
 
         Vec2 targetPosition = o.getPosition().add(moveVec);
 
         if (isOccupied(targetPosition, o.data.type()) == CollisionType.FIGHT){
-            Organism  target = worldMap[targetPosition.x()][targetPosition.y()];
-            return getFightResults(o, target);
+            if (isAOE) {
+                aoeAttack(o);
+            }
+            return MoveResults.NONE;
+//            Organism  target = worldMap[targetPosition.x()][targetPosition.y()];
+//            return getFightResults(o, target);
         } else {
             if (makeChild(o, null)) {
-                return Results.REPRODUCE;
+                return MoveResults.REPRODUCE;
             }
-            return Results.NONE;
+            return MoveResults.NONE;
         }
     }
 
-    private Results getFightResults(Organism o, Organism target) {
+    private MoveResults getFightResults(Organism o, Organism target) {
         switch (fight(o, target)) {
             case ATTACKER_WIN -> {
                 removeFromWorld(target);
-                return Results.FIGHT_WON;
+                return MoveResults.FIGHT_WON;
             }
             case DEFENDER_WIN -> {
                 removeFromWorld(o);
-                return Results.FIGHT_LOST;
+                return MoveResults.FIGHT_LOST;
             }
             default -> { // its also for special abilities use
-                return Results.NONE;
+                return MoveResults.NONE;
             }
         }
     }

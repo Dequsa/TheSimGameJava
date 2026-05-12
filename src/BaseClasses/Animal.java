@@ -15,13 +15,13 @@ public abstract class Animal extends Organism {
 
         Vec2 moveVec = getRandomMoveVec();
 
-        Controller.Results action = Controller.Results.NONE;
+        Controller.MoveResults action = Controller.MoveResults.NONE;
 
         if (controller.requestMove(this, moveVec)) {
             action = controller.moveResults(this,  moveVec);
         }
 
-        if (action == Controller.Results.MOVE || action == Controller.Results.FIGHT_WON) {
+        if (action == Controller.MoveResults.MOVE || action == Controller.MoveResults.FIGHT_WON) {
             move(moveVec);
         }
     }

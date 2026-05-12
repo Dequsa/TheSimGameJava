@@ -16,9 +16,9 @@ public class Antelope extends SpecialAnimal {
         final int ANTELOPE_STR      =   6;
         final int ANTELOPE_INIT     =   9;
         final Color ANTELOPE_COLOR  =   Color.MAGENTA;
-        final int  ANTELOPE_MOVESPEED = 2;
+        final int ANTELOPE_MOVE_SPEED = 2;
 
-        data = new OrganismData(Types.ANTELOPE, ANTELOPE_STR, ANTELOPE_INIT, ANTELOPE_MOVESPEED, ANTELOPE_COLOR);
+        data = new OrganismData(Types.ANTELOPE, ANTELOPE_STR, ANTELOPE_INIT, ANTELOPE_MOVE_SPEED, ANTELOPE_COLOR);
     }
 
     private boolean avoidEnemy(Organism other) {
@@ -38,8 +38,11 @@ public class Antelope extends SpecialAnimal {
 
     @Override
     public boolean specialAbilityCheck(Organism other) {
-        // activate only if the antelope is defending
-        return !isMoving();
+        if (!isMoving() && other.getData().str() >= data.str()) {
+            var rand = new java.util.Random();
+            return rand.nextBoolean();
+        }
+        return false;
     }
 
     @Override

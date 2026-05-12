@@ -3,7 +3,7 @@ package Structs;
 import BaseClasses.Organism;
 
 public interface Controller {
-    enum Results {
+    enum MoveResults {
         MOVE,
         FIGHT_LOST,
         FIGHT_WON,
@@ -12,9 +12,9 @@ public interface Controller {
     }
     boolean requestMove(Organism o, Vec2 moveVec);
 
-    Results moveResults(Organism o, Vec2 moveVec);
+    MoveResults moveResults(Organism o, Vec2 moveVec);
 
-    Results sowingResults(Organism o, Vec2 moveVec);
+    MoveResults sowingResults(Organism o, Vec2 moveVec, boolean isAOE);
 
     boolean checkSafeTiles(Vec2 oPosition, Vec2 moveVec);
 

@@ -29,7 +29,8 @@ public class Guarma extends SpecialPlant {
 
         other.setStr(other.getData().str() + STR_ADD);
 
-        return true;
+        // false means it doesn't win or avoid fight
+        return false;
     }
 
     @Override
