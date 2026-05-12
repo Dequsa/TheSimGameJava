@@ -18,7 +18,7 @@ public class Guarma extends SpecialPlant {
     public Guarma(Vec2 position, Controller controller, GridType gridType) {
         super(position, controller, gridType);
 
-        data = new OrganismData(Types.GUARMA, PLANT_STR,  PLANT_INIT, PLANT_MOVESPEED, color);
+        data = new OrganismData(Types.GUARMA, PLANT_STR,  PLANT_INIT, PLANT_MOVE_SPEED, color);
     }
 
     @Override

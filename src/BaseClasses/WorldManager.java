@@ -7,6 +7,9 @@ import Structs.Controller;
 import Structs.Types;
 import Structs.Vec2;
 import movementHandler.GridType;
+import movementHandler.HexagonMovement;
+import movementHandler.SquareMovement;
+import movementHandler.movementType;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -16,6 +19,7 @@ public class WorldManager implements Controller {
     private boolean isRunning = true;
     private boolean turnRequested = false;
     private final Random rand = new Random(); // randomizer
+    private movementType positionFinder = null;
     private final ArrayList<Organism> organisms;
     private final Organism[][] worldMap;
     private final ArrayList<Organism> toAdd = new ArrayList<>();
@@ -29,6 +33,14 @@ public class WorldManager implements Controller {
 
     public WorldManager(GridType gridType, int organismCount, int mapSize) {
         this.gridType = gridType;
+        switch (gridType) {
+            case HEXAGON:
+                positionFinder = new HexagonMovement();
+                break;
+            case SQUARE:
+                positionFinder = new SquareMovement();
+                break;
+        }
 
         if (mapSize <= 0) {
             mapSize = 10;
@@ -95,23 +107,27 @@ public class WorldManager implements Controller {
     }
 
     private Vec2 getChildPosition(Vec2 pos) {
-        for (int x = -1; x <= 1; x++) {
-            for (int y = -1; y <= 1; y++) {
-                var tarX = pos.x() + x;
-                var tarY = pos.y() + y;
+        final int BIRTH_RADIUS = 1;
 
-                if (tarX >= getMapSizeX() || tarY >= getMapSizeY()) {
-                    continue;
-                }
-                if (tarX < 0 || tarY < 0) {
-                    continue;
-                }
+        Vec2 [] possible_relative_positions = positionFinder.getValidMoves(pos.y(), BIRTH_RADIUS);
 
-                if (worldMap[pos.x() + x][pos.y() + y] == null) {
-                    return new Vec2(pos.x() + x, pos.y() + y);
-                }
-            }
+        Vec2 [] valid_positions = new Vec2[possible_relative_positions.length];
+
+        int i = 0;
+        for (var relative_pos : possible_relative_positions) {
+            var check_position = pos.add(relative_pos);
+            if (isOutOfBounds(check_position)) continue;
+
+            Organism target = worldMap[check_position.x()][check_position.y()];
+            if (target != null) continue;
+
+            valid_positions[i++] = check_position;
         }
+
+        if (valid_positions.length != 0) {
+            return valid_positions[rand.nextInt(valid_positions.length)];
+        }
+
         return null;
     }
 

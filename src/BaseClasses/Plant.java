@@ -6,7 +6,7 @@ import movementHandler.GridType;
 public abstract class Plant extends Organism{
     protected final int PLANT_STR = 0;
     protected final int PLANT_INIT = 0;
-    protected final int PLANT_MOVESPEED = 1;
+    protected final int PLANT_MOVE_SPEED = 1;
 
     public Plant(Vec2 position, Controller controller, GridType gridType) {
         super(position, controller, gridType);

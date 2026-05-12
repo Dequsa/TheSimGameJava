@@ -15,6 +15,6 @@ public class Grass extends Plant{
 
         final Color GRASS_COLOR = new Color(136, 231, 136, 255);
 
-        data = new OrganismData(Types.GRASS, PLANT_STR, PLANT_INIT, PLANT_MOVESPEED, GRASS_COLOR);
+        data = new OrganismData(Types.GRASS, PLANT_STR, PLANT_INIT, PLANT_MOVE_SPEED, GRASS_COLOR);
     }
 }
