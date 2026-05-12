@@ -4,6 +4,7 @@ import Structs.Vec2;
 import movementHandler.GridType;
 
 public abstract class Plant extends Organism{
+    protected final int PLANT_STR = 0;
     protected final int PLANT_INIT = 0;
     protected final int PLANT_MOVESPEED = 1;
 

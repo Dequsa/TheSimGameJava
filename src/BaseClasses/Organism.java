@@ -64,6 +64,13 @@ public abstract class Organism {
         this.age = age;
     }
 
+    /*
+    TODO figure how to change to so i dont have to create new instance of data everytime i want to change strength
+    */
+    public void setStr(int str) {
+        data = new OrganismData(data.type(), str, data.init(), data.moveSpeed(), data.color());
+    }
+
     public OrganismData getData() {
         return data;
     }

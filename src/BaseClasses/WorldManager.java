@@ -2,6 +2,7 @@ package BaseClasses;
 
 import Animals.*;
 import Plants.Grass;
+import Plants.SpecialPlants.Guarma;
 import Structs.Controller;
 import Structs.Types;
 import Structs.Vec2;
@@ -173,6 +174,9 @@ public class WorldManager implements Controller {
             case GRASS -> {
                 return new Grass(pos, this, gridType);
             }
+            case GUARMA -> {
+                return new Guarma(pos, this, gridType);
+            }
             default -> {
                 return null;
             }
@@ -302,11 +306,7 @@ public class WorldManager implements Controller {
             return FightResults.ATTACKER_WIN;
         }
 
-        if (winner == attacker) {
-            return FightResults.ATTACKER_WIN;
-        }
-
-        return FightResults.DEFENDER_WIN;
+        return FightResults.ATTACKER_WIN;
     }
 
     @Override

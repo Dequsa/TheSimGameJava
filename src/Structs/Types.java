@@ -9,6 +9,7 @@ public enum Types {
     TURTLE,
     ANTELOPE,
     GRASS,
+    GUARMA,
     NONE // can be used as counter of types
     ;
 }
