@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public abstract class WorldPanel extends JPanel {
     protected final WorldManager worldManager;
@@ -51,7 +52,31 @@ public abstract class WorldPanel extends JPanel {
         drawGrid(g2d);
     }
 
-    protected abstract MouseAdapter createMouseListener();
+    protected boolean decideCellAction(Shape tile, int tileX, int tileY, int mouseX, int mouseY) {
+        if (tile.contains(mouseX, mouseY)) {
+            var map = worldManager.getWorldMap();
+            if (map[tileX][tileY] == null) {
+                showSpawnMenu(tileX, tileY, mouseX, mouseY);
+            } else {
+                worldManager.handleMouseClick(tileX, tileY, Types.NONE);
+                repaint();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected abstract void handleMouseClick(MouseEvent e);
+
+    protected MouseAdapter createMouseListener() {
+        return new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                handleMouseClick(e);
+            }
+        };
+    }
+
     protected abstract ComponentListener createComponentListener();
     protected abstract void drawGrid(Graphics2D g2d);
 }

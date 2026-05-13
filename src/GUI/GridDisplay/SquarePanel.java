@@ -31,33 +31,19 @@ public class SquarePanel extends WorldPanel {
         return new Rectangle(xPos, yPos, cellSize, cellSize);
     }
 
-    @Override
-    protected MouseAdapter createMouseListener() {
-        return new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int mouseX = e.getX();
-                int mouseY = e.getY();
+    protected void handleMouseClick(MouseEvent e) {
+        int mouseX = e.getX();
+        int mouseY = e.getY();
 
-                for(int x = 0; x < worldManager.getMapSizeX(); x++) {
-                    for (int y = 0; y < worldManager.getMapSizeY(); y++) {
-                        Rectangle square = getSquareAtPosition(x, y);
+        for(int x = 0; x < worldManager.getMapSizeX(); x++) {
+            for (int y = 0; y < worldManager.getMapSizeY(); y++) {
+                Rectangle tile = getSquareAtPosition(x, y);
 
-                        if (square.contains(mouseX, mouseY)) {
-                            var map = worldManager.getWorldMap();
-                            if (map[x][y] == null) {
-                                showSpawnMenu(x, y, mouseX, mouseY);
-                            } else {
-                                worldManager.handleMouseClick(x, y, Types.NONE);
-                                repaint();
-                            }
-                            return;
-                        }
-                    }
-                }
+                if (decideCellAction(tile, x, y, mouseX, mouseY)) return;
             }
-        };
+        }
     }
+
 
     @Override
     protected ComponentListener createComponentListener() {
