@@ -13,7 +13,7 @@ public class Main {
 
     int radius = 20;
     int organismCount = 0;
-    GridType gridType = GridType.HEXAGON;
+    GridType gridType = GridType.SQUARE;
 
     WorldManager worldManager = new WorldManager(gridType,organismCount, radius);
 

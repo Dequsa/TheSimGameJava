@@ -17,6 +17,26 @@ public record Vec2(int x, int y) {
         return new Vec2(this.x + otherVec2.x, this.y + otherVec2.y);
     }
 
+    public Vec2 subtract(Vec2 otherVec2) {
+        return new Vec2(this.x - otherVec2.x, this.y - otherVec2.y);
+    }
+
+    public int distanceBetween(Vec2 otherVec2) {
+        return (int) Math.sqrt(Math.pow(otherVec2.x - this.x, 2) + Math.pow(otherVec2.y - this.y, 2));
+    }
+
+    public Direction getRelativePositionToOther(Vec2 otherVec2) {
+        Vec2 diff = otherVec2.subtract(this);
+        if (diff.x() == 0) {
+            return diff.y() > 0 ? Direction.UP : Direction.DOWN;
+        } else if (diff.y() == 0) {
+            return diff.x() > 0 ? Direction.RIGHT : Direction.LEFT;
+        } else {
+            return Direction.NONE;
+        }
+    }
+
+
     @Override
     public String toString() {
         return "x: " + x + ", y: " + y;

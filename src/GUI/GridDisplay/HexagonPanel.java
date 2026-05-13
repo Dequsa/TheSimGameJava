@@ -57,6 +57,9 @@ public class HexagonPanel extends WorldPanel {
     }
 
     @Override
+    protected void handlePlayerMovement(MouseEvent e) {}
+
+    @Override
     protected void handleMouseClick(MouseEvent e) {
         int mouseX = e.getX();
         int mouseY = e.getY();

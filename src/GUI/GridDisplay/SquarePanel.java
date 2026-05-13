@@ -1,6 +1,7 @@
 package GUI.GridDisplay;
 
 import BaseClasses.Organism;
+import Structs.Vec2;
 import WorldManager.WorldManager;
 import GUI.WorldPanel;
 import Structs.Types;
@@ -29,6 +30,26 @@ public class SquarePanel extends WorldPanel {
         int xPos = (x * cellSize) + margin;
         int yPos = (y * cellSize) + margin;
         return new Rectangle(xPos, yPos, cellSize, cellSize);
+    }
+
+    @Override
+    protected void handlePlayerMovement(MouseEvent e) {
+        int mouseX = e.getX();
+        int mouseY = e.getY();
+        Rectangle tile = getSquareAtPosition(mouseX, mouseY);
+
+        if (worldManager.isTileNextToOrganism((int)(tile.getX()), (int)(tile.getY()))) {
+            // set human direction to this tile that is clicked on
+            Vec2 tilePosition = new Vec2((int)(tile.getX()), (int)(tile.getY()));
+            var orgs = worldManager.getContollableOrgnaisms();
+
+            for (var o : orgs) {
+                int distance = tilePosition.distanceBetween(o.getPosition());
+                if (distance > 1 || distance < -1 ) continue;
+
+                o.setMoveDirection(tilePosition.getRelativePositionToOther(o.getPosition()));
+            }
+        }
     }
 
     protected void handleMouseClick(MouseEvent e) {

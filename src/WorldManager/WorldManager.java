@@ -31,6 +31,7 @@ public class WorldManager implements Controller {
     private final Organism[][] worldMap;
     private final ArrayList<Organism> toAdd = new ArrayList<>();
     private final ArrayList<Organism> toRemove = new ArrayList<>();
+    private final ArrayList<Organism> contollableOrgnaisms = new ArrayList<>();
 
     public Direction getNextMoveDirection() {
         return nextMoveDirection;
@@ -38,6 +39,10 @@ public class WorldManager implements Controller {
 
     public void setNextMoveDirection(Direction nextMoveDirection) {
         this.nextMoveDirection = nextMoveDirection;
+    }
+
+    public ArrayList<Organism> getContollableOrgnaisms() {
+        return contollableOrgnaisms;
     }
 
     enum CollisionType {
@@ -69,7 +74,21 @@ public class WorldManager implements Controller {
         populateMap(organismCount);
     }
 
-    public void handleMouseClick(int x, int y, Types type) {
+    public boolean isTileNextToOrganism(int tileX, int tileY) {
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                if (x == 0 && y == 0) continue;
+                Vec2 checkPosition = new Vec2(tileX + x, tileY + y);
+                if (isOutOfBounds(checkPosition)) continue;
+                if (isOccupied(checkPosition)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void handleTileAction(int x, int y, Types type) {
         Organism target = worldMap[x][y];
         if (target != null) {
             target.setActive(false);
@@ -258,9 +277,16 @@ public class WorldManager implements Controller {
     }
 
     private void fillAndRemoveOrganisms() {
-
         organisms.removeAll(toRemove);
+        contollableOrgnaisms.removeAll(toRemove);
+
         organisms.addAll(toAdd);
+
+        for (var o : toAdd) {
+            if (o.isControllable()) {
+                contollableOrgnaisms.add(o);
+            }
+        }
 
         toRemove.clear();
         toAdd.clear();

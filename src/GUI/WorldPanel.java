@@ -31,7 +31,7 @@ public abstract class WorldPanel extends JPanel {
 
             JMenuItem item = new JMenuItem(type.toString());
             item.addActionListener(e -> {
-                worldManager.handleMouseClick(gX, gY, type);
+                worldManager.handleTileAction(gX, gY, type);
                 repaint();
             });
 
@@ -58,7 +58,7 @@ public abstract class WorldPanel extends JPanel {
             if (map[tileX][tileY] == null) {
                 showSpawnMenu(tileX, tileY, mouseX, mouseY);
             } else {
-                worldManager.handleMouseClick(tileX, tileY, Types.NONE);
+                worldManager.handleTileAction(tileX, tileY, Types.NONE);
                 repaint();
             }
             return true;
@@ -67,12 +67,17 @@ public abstract class WorldPanel extends JPanel {
     }
 
     protected abstract void handleMouseClick(MouseEvent e);
+    protected abstract void handlePlayerMovement(MouseEvent e);
 
     protected MouseAdapter createMouseListener() {
         return new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                handleMouseClick(e);
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    handleMouseClick(e);
+                } else {
+                    handlePlayerMovement(e);
+                }
             }
         };
     }
