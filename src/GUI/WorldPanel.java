@@ -1,18 +1,23 @@
 package GUI;
 
+import BaseClasses.Organism;
+import Structs.Vec2;
 import WorldManager.WorldManager;
 import Structs.Types;
+import movementHandler.movementType;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public abstract class WorldPanel extends JPanel {
     protected final WorldManager worldManager;
     protected int cellSize;
     protected final int margin = 20;
+    protected movementType movementHandler = null;
 
     public WorldPanel(WorldManager worldManager, int cellSize) {
         this.worldManager = worldManager;
@@ -67,6 +72,24 @@ public abstract class WorldPanel extends JPanel {
     }
 
     protected abstract void handleMouseClick(MouseEvent e);
+
+    protected void handleRightMouseClick(Shape tile, int x, int y, int mouseX, int mouseY) {
+        if (tile.contains(mouseX, mouseY)) {
+            ArrayList<Organism> organisms = worldManager.getContollableOrganisms();
+
+            if (organisms.isEmpty()) return;
+
+            Vec2 tilePosition = new Vec2(x, y);
+
+            for (var org : organisms) {
+                Vec2 []possibleOffsets = movementHandler.getMultiStep(org.getPosition().y(), org.getData().moveSpeed());
+                if (tilePosition.isNeighboring(org.getPosition(), possibleOffsets)) {
+                    var moveVec = tilePosition.subtract(org.getPosition());
+                    org.setMoveVector(moveVec);
+                }
+            }
+        }
+    }
     protected abstract void handlePlayerMovement(MouseEvent e);
 
     protected MouseAdapter createMouseListener() {
@@ -75,9 +98,11 @@ public abstract class WorldPanel extends JPanel {
             public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     handleMouseClick(e);
+                    return;
                 } else {
                     handlePlayerMovement(e);
                 }
+                worldManager.setTurnRequested(true);
             }
         };
     }

@@ -31,7 +31,7 @@ public class WorldManager implements Controller {
     private final Organism[][] worldMap;
     private final ArrayList<Organism> toAdd = new ArrayList<>();
     private final ArrayList<Organism> toRemove = new ArrayList<>();
-    private final ArrayList<Organism> contollableOrgnaisms = new ArrayList<>();
+    private final ArrayList<Organism> contollableOrganisms = new ArrayList<>();
 
     public Direction getNextMoveDirection() {
         return nextMoveDirection;
@@ -41,8 +41,8 @@ public class WorldManager implements Controller {
         this.nextMoveDirection = nextMoveDirection;
     }
 
-    public ArrayList<Organism> getContollableOrgnaisms() {
-        return contollableOrgnaisms;
+    public ArrayList<Organism> getContollableOrganisms() {
+        return contollableOrganisms;
     }
 
     enum CollisionType {
@@ -152,7 +152,7 @@ public class WorldManager implements Controller {
     private Vec2 getChildPosition(Vec2 pos) {
         final int BIRTH_RADIUS = 1;
 
-        Vec2[] possible_relative_positions = positionFinder.getValidMoves(pos.y(), BIRTH_RADIUS);
+        Vec2[] possible_relative_positions = positionFinder.getSingleStep(pos.y());
 
         Vec2[] valid_positions = new Vec2[possible_relative_positions.length];
 
@@ -278,13 +278,13 @@ public class WorldManager implements Controller {
 
     private void fillAndRemoveOrganisms() {
         organisms.removeAll(toRemove);
-        contollableOrgnaisms.removeAll(toRemove);
+        contollableOrganisms.removeAll(toRemove);
 
         organisms.addAll(toAdd);
 
         for (var o : toAdd) {
             if (o.isControllable()) {
-                contollableOrgnaisms.add(o);
+                contollableOrganisms.add(o);
             }
         }
 
@@ -307,11 +307,6 @@ public class WorldManager implements Controller {
         for (Organism organism : organisms) {
             if (!organism.isActive()) {
                 continue;
-            }
-
-            if (organism.isControllable()) {
-                System.out.println("Setting key of: " + organism + " to " + nextMoveDirection);
-                organism.setMoveDirection(nextMoveDirection);
             }
 
             organism.update();

@@ -7,7 +7,7 @@ import movementHandler.GridType;
 import java.awt.*;
 
 public class Human extends SpecialAnimal {
-    private Direction nextDir = Direction.NONE;
+    private Vec2 moveVec = null;
 
     public Human(Vec2 position, Controller controller, GridType gridType) {
         super(position, controller, gridType);
@@ -22,16 +22,22 @@ public class Human extends SpecialAnimal {
     }
 
     @Override
-    public void setMoveDirection(Direction dir) {
-        nextDir = dir;
+    public void setMoveVector(Vec2 moveVec) {
+         this.moveVec = moveVec;
     }
 
     @Override
-    protected Vec2 determineMove() {     /* after this override it's not random anymore*/
-        if (nextDir == Direction.SPECIAL ||  nextDir == Direction.NONE) {
+    protected Vec2 determineMove() {
+        if (moveVec == null) {
             return new Vec2(0, 0);
         }
-        Vec2 []possibleMoves = movementHandler.getValidMoves(getPosition().y(), data.moveSpeed());
-        return possibleMoves[nextDir.ordinal()];
+
+        return moveVec;
+    }
+
+    @Override
+    public void update() {
+        super.update();
+        moveVec = null;
     }
 }

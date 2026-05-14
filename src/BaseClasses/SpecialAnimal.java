@@ -1,7 +1,6 @@
 package BaseClasses;
 
 import Structs.Controller;
-import Structs.Direction;
 import Structs.Vec2;
 import movementHandler.GridType;
 
@@ -22,7 +21,7 @@ public abstract class SpecialAnimal extends Animal{
     }
 
     protected Vec2 findSafeSpot() {
-        Vec2 []possibleMove = movementHandler.getValidMoves(getPosition().y(), getData().moveSpeed());
+        Vec2 []possibleMove = movementHandler.getSingleStep(getPosition().y());
 
         var safeMoves = new ArrayList<Vec2>(possibleMove.length);
         for (var move :  possibleMove) {

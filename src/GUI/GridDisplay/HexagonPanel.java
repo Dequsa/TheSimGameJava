@@ -3,13 +3,13 @@ package GUI.GridDisplay;
 import BaseClasses.Organism;
 import WorldManager.WorldManager;
 import GUI.WorldPanel;
-import Structs.Types;
+import movementHandler.GridType;
+import movementHandler.HexagonMovement;
 
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class HexagonPanel extends WorldPanel {
@@ -17,6 +17,8 @@ public class HexagonPanel extends WorldPanel {
     public HexagonPanel(WorldManager worldManager, int radius) {
         super(worldManager, radius);
         updatePreferredSize();
+
+        movementHandler = new HexagonMovement();
     }
 
     private void updatePreferredSize() {
@@ -39,8 +41,8 @@ public class HexagonPanel extends WorldPanel {
         }
         double yPos = y * vertDist;
 
-        int centerX = (int)(xPos + (hexWidth / 2.0)) + margin;
-        int centerY = (int)(yPos + cellSize) + margin;
+        int centerX = (int) (xPos + (hexWidth / 2.0)) + margin;
+        int centerY = (int) (yPos + cellSize) + margin;
 
         return createHexagon(centerX, centerY, cellSize);
     }
@@ -57,13 +59,24 @@ public class HexagonPanel extends WorldPanel {
     }
 
     @Override
-    protected void handlePlayerMovement(MouseEvent e) {}
+    protected void handlePlayerMovement(MouseEvent e) {
+        int mouseX = e.getX();
+        int mouseY = e.getY();
+
+        for (int x = 0; x < worldManager.getMapSizeX(); x++) {
+            for (int y = 0; y < worldManager.getMapSizeY(); y++) {
+                Polygon tile = getHexagonAtPosition(x, y);
+
+                handleRightMouseClick(tile, x, y, mouseX, mouseY);
+            }
+        }
+    }
 
     @Override
     protected void handleMouseClick(MouseEvent e) {
         int mouseX = e.getX();
         int mouseY = e.getY();
-        for(int x = 0; x < worldManager.getMapSizeX(); x++) {
+        for (int x = 0; x < worldManager.getMapSizeX(); x++) {
             for (int y = 0; y < worldManager.getMapSizeY(); y++) {
                 Polygon tile = getHexagonAtPosition(x, y);
 

@@ -4,20 +4,21 @@ import BaseClasses.Organism;
 import Structs.Vec2;
 import WorldManager.WorldManager;
 import GUI.WorldPanel;
-import Structs.Types;
 
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 public class SquarePanel extends WorldPanel {
 
     public SquarePanel(WorldManager worldManager, int squareSize) {
         super(worldManager, squareSize);
         updatePreferredSize();
+
+        movementHandler = new movementHandler.SquareMovement();
     }
 
     private void updatePreferredSize() {
@@ -36,18 +37,12 @@ public class SquarePanel extends WorldPanel {
     protected void handlePlayerMovement(MouseEvent e) {
         int mouseX = e.getX();
         int mouseY = e.getY();
-        Rectangle tile = getSquareAtPosition(mouseX, mouseY);
 
-        if (worldManager.isTileNextToOrganism((int)(tile.getX()), (int)(tile.getY()))) {
-            // set human direction to this tile that is clicked on
-            Vec2 tilePosition = new Vec2((int)(tile.getX()), (int)(tile.getY()));
-            var orgs = worldManager.getContollableOrgnaisms();
+        for(int x = 0; x < worldManager.getMapSizeX(); x++) {
+            for (int y = 0; y < worldManager.getMapSizeY(); y++) {
+                Rectangle tile = getSquareAtPosition(x, y);
 
-            for (var o : orgs) {
-                int distance = tilePosition.distanceBetween(o.getPosition());
-                if (distance > 1 || distance < -1 ) continue;
-
-                o.setMoveDirection(tilePosition.getRelativePositionToOther(o.getPosition()));
+                handleRightMouseClick(tile, x, y, mouseX, mouseY);
             }
         }
     }

@@ -1,6 +1,5 @@
 package BaseClasses;
 import Structs.Controller;
-import Structs.Direction;
 import Structs.OrganismData;
 import Structs.Vec2;
 import movementHandler.SquareMovement;
@@ -42,7 +41,7 @@ public abstract class Organism {
         var rand = new java.util.Random();
         int y = position.y();
 
-        Vec2[] validMoves = movementHandler.getValidMoves(y, data.moveSpeed());
+        Vec2[] validMoves = movementHandler.getMultiStep(y, data.moveSpeed());
 
         int randomIndex = rand.nextInt(validMoves.length);
         return validMoves[randomIndex];
@@ -108,5 +107,5 @@ public abstract class Organism {
         this.controllable = controllable;
     }
 
-    public void setMoveDirection(Direction dir) {}
+    public void setMoveVector(Vec2 moveVec) {}
 }
