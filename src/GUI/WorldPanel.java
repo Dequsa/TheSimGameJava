@@ -90,6 +90,7 @@ public abstract class WorldPanel extends JPanel {
             }
         }
     }
+
     protected abstract void handlePlayerMovement(MouseEvent e);
 
     protected MouseAdapter createMouseListener() {
