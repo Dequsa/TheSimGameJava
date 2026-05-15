@@ -10,7 +10,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 public class SquarePanel extends WorldPanel {
 
@@ -34,32 +33,9 @@ public class SquarePanel extends WorldPanel {
     }
 
     @Override
-    protected void handlePlayerMovement(MouseEvent e) {
-        int mouseX = e.getX();
-        int mouseY = e.getY();
-
-        for(int x = 0; x < worldManager.getMapSizeX(); x++) {
-            for (int y = 0; y < worldManager.getMapSizeY(); y++) {
-                Rectangle tile = getSquareAtPosition(x, y);
-
-                handleRightMouseClick(tile, x, y, mouseX, mouseY);
-            }
-        }
+    protected Shape getTileAtPosition(int x, int y) {
+        return getSquareAtPosition(x, y);
     }
-
-    protected void handleMouseClick(MouseEvent e) {
-        int mouseX = e.getX();
-        int mouseY = e.getY();
-
-        for(int x = 0; x < worldManager.getMapSizeX(); x++) {
-            for (int y = 0; y < worldManager.getMapSizeY(); y++) {
-                Rectangle tile = getSquareAtPosition(x, y);
-
-                if (decideCellAction(tile, x, y, mouseX, mouseY)) return;
-            }
-        }
-    }
-
 
     @Override
     protected ComponentListener createComponentListener() {

@@ -1,9 +1,9 @@
 package GUI.GridDisplay;
 
 import BaseClasses.Organism;
+import Structs.Vec2;
 import WorldManager.WorldManager;
 import GUI.WorldPanel;
-import movementHandler.GridType;
 import movementHandler.HexagonMovement;
 
 import java.awt.*;
@@ -59,30 +59,8 @@ public class HexagonPanel extends WorldPanel {
     }
 
     @Override
-    protected void handlePlayerMovement(MouseEvent e) {
-        int mouseX = e.getX();
-        int mouseY = e.getY();
-
-        for (int x = 0; x < worldManager.getMapSizeX(); x++) {
-            for (int y = 0; y < worldManager.getMapSizeY(); y++) {
-                Polygon tile = getHexagonAtPosition(x, y);
-
-                handleRightMouseClick(tile, x, y, mouseX, mouseY);
-            }
-        }
-    }
-
-    @Override
-    protected void handleMouseClick(MouseEvent e) {
-        int mouseX = e.getX();
-        int mouseY = e.getY();
-        for (int x = 0; x < worldManager.getMapSizeX(); x++) {
-            for (int y = 0; y < worldManager.getMapSizeY(); y++) {
-                Polygon tile = getHexagonAtPosition(x, y);
-
-                if (decideCellAction(tile, x, y, mouseX, mouseY)) return;
-            }
-        }
+    protected Shape getTileAtPosition(int x, int y) {
+        return getHexagonAtPosition(x, y);
     }
 
     @Override

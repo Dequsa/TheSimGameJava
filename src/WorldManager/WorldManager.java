@@ -74,18 +74,22 @@ public class WorldManager implements Controller {
         populateMap(organismCount);
     }
 
-    public boolean isTileNextToOrganism(int tileX, int tileY) {
-        for (int x = -1; x <= 1; x++) {
-            for (int y = -1; y <= 1; y++) {
-                if (x == 0 && y == 0) continue;
-                Vec2 checkPosition = new Vec2(tileX + x, tileY + y);
-                if (isOutOfBounds(checkPosition)) continue;
-                if (isOccupied(checkPosition)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+//    public boolean isTileNextToOrganism(int tileX, int tileY) {
+//        for (int x = -1; x <= 1; x++) {
+//            for (int y = -1; y <= 1; y++) {
+//                if (x == 0 && y == 0) continue;
+//                Vec2 checkPosition = new Vec2(tileX + x, tileY + y);
+//                if (isOutOfBounds(checkPosition)) continue;
+//                if (isOccupied(checkPosition)) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
+
+    public Organism getOrganismAt(Vec2 position) {
+        return worldMap[position.x()][position.y()];
     }
 
     public void handleTileAction(int x, int y, Types type) {

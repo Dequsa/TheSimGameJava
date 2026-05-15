@@ -2,12 +2,14 @@ package BaseClasses;
 import Structs.Controller;
 import Structs.OrganismData;
 import Structs.Vec2;
+import items.Item;
 import movementHandler.SquareMovement;
 import movementHandler.GridType;
 import movementHandler.HexagonMovement;
 import movementHandler.movementType;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public abstract class Organism {
     protected boolean controllable = false;
@@ -108,4 +110,8 @@ public abstract class Organism {
     }
 
     public void setMoveVector(Vec2 moveVec) {}
+
+    public void useSpecialItem(Item item) {}
+
+    public ArrayList<Item> getSpecialItems() { return null; }
 }

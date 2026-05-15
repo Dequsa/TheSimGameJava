@@ -4,6 +4,7 @@ import BaseClasses.Organism;
 import Structs.Vec2;
 import WorldManager.WorldManager;
 import Structs.Types;
+import items.Item;
 import movementHandler.movementType;
 
 import javax.swing.*;
@@ -28,7 +29,7 @@ public abstract class WorldPanel extends JPanel {
         this.addComponentListener(createComponentListener());
     }
 
-    protected void showSpawnMenu(int gX, int gY, int pX , int pY) {
+    protected void showSpawnMenu(int gX, int gY, int pX, int pY) {
         JPopupMenu popup = new JPopupMenu();
 
         for (var type : Types.values()) {
@@ -57,51 +58,110 @@ public abstract class WorldPanel extends JPanel {
         drawGrid(g2d);
     }
 
-    protected boolean decideCellAction(Shape tile, int tileX, int tileY, int mouseX, int mouseY) {
-        if (tile.contains(mouseX, mouseY)) {
-            var map = worldManager.getWorldMap();
-            if (map[tileX][tileY] == null) {
-                showSpawnMenu(tileX, tileY, mouseX, mouseY);
-            } else {
-                worldManager.handleTileAction(tileX, tileY, Types.NONE);
-                repaint();
-            }
-            return true;
-        }
-        return false;
+    private Vec2 getMousePosition(MouseEvent e) {
+        return new Vec2(e.getX(), e.getY());
     }
 
-    protected abstract void handleMouseClick(MouseEvent e);
+    protected abstract Shape getTileAtPosition(int x, int y);
 
-    protected void handleRightMouseClick(Shape tile, int x, int y, int mouseX, int mouseY) {
-        if (tile.contains(mouseX, mouseY)) {
-            ArrayList<Organism> organisms = worldManager.getContollableOrganisms();
+    protected void decideCellAction(int tileX, int tileY, int mouseX, int mouseY) {
+        var map = worldManager.getWorldMap();
+        if (map[tileX][tileY] == null) {
+            showSpawnMenu(tileX, tileY, mouseX, mouseY);
+        } else {
+            worldManager.handleTileAction(tileX, tileY, Types.NONE);
+            repaint();
+        }
+    }
 
-            if (organisms.isEmpty()) return;
+    protected void handleMouseClick(MouseEvent e) {
+        Vec2 tilePosition = getMouseTilePosition(e);
+        Vec2 mousePosition = getMousePosition(e);
+        if (tilePosition == null) return;
 
-            Vec2 tilePosition = new Vec2(x, y);
+        decideCellAction(tilePosition.x(), tilePosition.y(), mousePosition.x(), mousePosition.y());
+    }
 
-            for (var org : organisms) {
-                Vec2 []possibleOffsets = movementHandler.getMultiStep(org.getPosition().y(), org.getData().moveSpeed());
-                if (tilePosition.isNeighboring(org.getPosition(), possibleOffsets)) {
-                    var moveVec = tilePosition.subtract(org.getPosition());
-                    org.setMoveVector(moveVec);
+    protected void handlePlayerMovement(MouseEvent e) {
+        Vec2 tilePosition = getMouseTilePosition(e);
+
+        if (tilePosition == null) return;
+
+        handleRightMouseClick(tilePosition.x(), tilePosition.y());
+    }
+
+    protected Vec2 getMouseTilePosition(MouseEvent e) {
+        int mouseX = e.getX();
+        int mouseY = e.getY();
+
+        for (int x = 0; x < worldManager.getMapSizeX(); x++) {
+            for (int y = 0; y < worldManager.getMapSizeY(); y++) {
+                Shape tile = getTileAtPosition(x, y);
+
+                if (tile.contains(mouseX, mouseY)) {
+                    return new Vec2(x, y);
                 }
             }
         }
+        return null;
     }
 
-    protected abstract void handlePlayerMovement(MouseEvent e);
+    protected void handleRightMouseClick(int tileX, int tileY) {
+        ArrayList<Organism> organisms = worldManager.getContollableOrganisms();
+
+        if (organisms.isEmpty()) return;
+
+        Vec2 tilePosition = new Vec2(tileX, tileY);
+
+        for (var org : organisms) {
+            Vec2[] possibleOffsets = movementHandler.getMultiStep(org.getPosition().y(), org.getData().moveSpeed());
+            if (tilePosition.isNeighboring(org.getPosition(), possibleOffsets)) {
+                var moveVec = tilePosition.subtract(org.getPosition());
+                org.setMoveVector(moveVec);
+            }
+        }
+    }
+
+    private void showAndChooseItemFromMenu(Organism org, int pX, int pY) {
+        JPopupMenu popup = new JPopupMenu();
+
+        for (var it : org.getSpecialItems()) {
+            if (it == null) continue;
+
+            JMenuItem item = new JMenuItem(it.toString());
+            item.addActionListener(e -> {
+                org.useSpecialItem(it);
+                repaint();
+            });
+
+            popup.add(item);
+        }
+
+        popup.show(this, pX, pY);
+    }
+
+    private void handleSpecialAbilityClick(MouseEvent e) {
+        Vec2 tilePosition = getMouseTilePosition(e);
+        if (tilePosition == null) return;
+
+        var org = worldManager.getOrganismAt(tilePosition);
+        if (org == null) return;
+
+        Vec2 mousePosition = getMousePosition(e);
+        showAndChooseItemFromMenu(org, mousePosition.x(), mousePosition.y());
+    }
 
     protected MouseAdapter createMouseListener() {
         return new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {
+                if (e.getButton() == MouseEvent.BUTTON1) {          /* left-click */
                     handleMouseClick(e);
                     return;
-                } else {
+                } else if (e.getButton() == MouseEvent.BUTTON3) {   /* right-click */
                     handlePlayerMovement(e);
+                } else {                                            /* other mouse buttons */
+                    handleSpecialAbilityClick(e);
                 }
                 worldManager.setTurnRequested(true);
             }
@@ -109,5 +169,6 @@ public abstract class WorldPanel extends JPanel {
     }
 
     protected abstract ComponentListener createComponentListener();
+
     protected abstract void drawGrid(Graphics2D g2d);
 }
