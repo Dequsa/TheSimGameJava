@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class InputHandler implements KeyListener {
-    WorldManager worldManager;
+    private transient WorldManager worldManager;
 
     public InputHandler(WorldManager worldManager) {
         this.worldManager = worldManager;
@@ -20,7 +20,7 @@ public class InputHandler implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
-//            case KeyEvent.VK_Q -> System.exit(0); // world save game
+            case KeyEvent.VK_Q -> worldManager.setRunning(false);
 //            case KeyEvent.VK_W -> worldManager.setNextMoveDirection(Direction.UP);
 //            case KeyEvent.VK_E -> worldManager.setNextMoveDirection(Direction.UP_RIGHT);
 //            case KeyEvent.VK_A -> worldManager.setNextMoveDirection(Direction.LEFT);

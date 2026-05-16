@@ -1,19 +1,21 @@
 package items;
 
 import BaseClasses.Organism;
+import GUI.TextPrinter;
 
 public class StrengthPotion extends Item{
     final int STR_INCREASE;
     final int PER_TURN_DECREASE = 1;
 
-    public StrengthPotion(int strIncrease, int duration) {
-        super(duration);
+    public StrengthPotion(int strIncrease, int duration, TextPrinter printer) {
+        super(duration, printer);
         STR_INCREASE = strIncrease;
     }
 
     @Override
     public void applyEffect(Organism o) {
         o.setStr(o.getData().str() + STR_INCREASE);
+        printer.print("Strength Potion used: +" + STR_INCREASE);
         System.out.println("Strength Potion used: +" + STR_INCREASE);
     }
 

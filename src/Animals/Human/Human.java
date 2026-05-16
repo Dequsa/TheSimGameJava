@@ -23,7 +23,7 @@ public class Human extends SpecialAnimal {
         final int HUMAN_MOVE_SPEED = 1;
         final int POTION_STR = 10;
 
-        specialItems.add(new items.StrengthPotion(POTION_STR, 5));
+        specialItems.add(new items.StrengthPotion(POTION_STR, 5, printer));
 
         data = new OrganismData(Types.HUMAN, HUMAN_STR, HUMAN_INIT, HUMAN_MOVE_SPEED, HUMAN_COLOR);
     }

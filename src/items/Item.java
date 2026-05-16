@@ -1,12 +1,16 @@
 package items;
 
 import BaseClasses.Organism;
+import GUI.TextPrinter;
 
-public abstract class Item {
+import java.io.Serializable;
+
+public abstract class Item implements Serializable {
     int duration = 0;
-
-    public Item(int duration) {
+    final TextPrinter printer;
+    public Item(int duration, TextPrinter printer) {
         this.duration = duration;
+        this.printer = printer;
     }
 
     public abstract void applyEffect(Organism o);

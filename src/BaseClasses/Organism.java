@@ -9,9 +9,10 @@ import movementHandler.HexagonMovement;
 import movementHandler.movementType;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public abstract class Organism {
+public abstract class Organism implements Serializable {
     protected boolean controllable = false;
     protected OrganismData data;
     private Vec2 position = null;

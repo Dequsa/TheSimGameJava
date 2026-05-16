@@ -1,6 +1,8 @@
 package Structs;
 
-public record Vec2(int x, int y) {
+import java.io.Serializable;
+
+public record Vec2(int x, int y) implements Serializable {
     public Vec2 move(int vectorX, int vectorY) {
         return new Vec2(this.x + vectorX, this.y + vectorY);
     }

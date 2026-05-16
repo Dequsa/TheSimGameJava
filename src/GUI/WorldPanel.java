@@ -13,7 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public abstract class WorldPanel extends JPanel {
+public abstract class WorldPanel extends JPanel implements TextPrinter {
     protected final WorldManager worldManager;
     protected int cellSize;
     protected final int margin = 20;
@@ -26,6 +26,20 @@ public abstract class WorldPanel extends JPanel {
 
         this.addMouseListener(createMouseListener());
         this.addComponentListener(createComponentListener());
+    }
+
+    @Override
+    public void print(String str) {
+        JLabel text = new JLabel(str);
+        text.setForeground(Color.WHITE);
+        text.setFont(new Font("Arial", Font.BOLD, 16));
+        text.setBounds(margin, margin, 100, 20);
+        add(text);
+    }
+
+    @Override
+    public void clear() {
+
     }
 
     protected void showSpawnMenu(Vec2 gPos, Vec2 pPos) {

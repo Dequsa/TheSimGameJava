@@ -3,6 +3,7 @@ import GUI.GridDisplay.SquarePanel;
 import GUI.WindowInstance;
 import GUI.WorldPanel;
 import Input.InputHandler;
+import Tools.ObjectManager;
 import WorldManager.WorldManager;
 import movementHandler.GridType;
 
@@ -14,8 +15,14 @@ public class Main {
     int radius = 20;
     int organismCount = 0;
     GridType gridType = GridType.HEXAGON;
+    final String savePath = "save.dat";
 
-    WorldManager worldManager = new WorldManager(gridType,organismCount, radius);
+    ObjectManager manager = new ObjectManager();
+
+//    WorldManager worldManager = new WorldManager(gridType,organismCount, radius);
+
+    WorldManager worldManager = (WorldManager) manager.loadGameState(savePath);
+    worldManager.setRunning(true);
 
     var window = new WindowInstance(defaultWinSizeX, defaultWinSizeY);
 
@@ -46,5 +53,8 @@ public class Main {
 
       try {Thread.sleep(10);} catch (InterruptedException e) {}
     }
+    manager.saveGameState(savePath, worldManager);
+
+    System.exit(0);
   }
 }

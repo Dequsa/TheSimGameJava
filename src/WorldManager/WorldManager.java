@@ -17,10 +17,11 @@ import movementHandler.HexagonMovement;
 import movementHandler.SquareMovement;
 import movementHandler.movementType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class WorldManager implements Controller {
+public class WorldManager implements Controller, Serializable {
     private final GridType gridType;
     private boolean isRunning = true;
     private boolean turnRequested = false;
