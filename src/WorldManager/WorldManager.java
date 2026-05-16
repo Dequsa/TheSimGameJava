@@ -92,8 +92,8 @@ public class WorldManager implements Controller {
         return worldMap[position.x()][position.y()];
     }
 
-    public void handleTileAction(int x, int y, Types type) {
-        Organism target = worldMap[x][y];
+    public void handleTileAction(Vec2 tilePos, Types type) {
+        Organism target = worldMap[tilePos.x()][tilePos.y()];
         if (target != null) {
             target.setActive(false);
             removeFromWorld(target);
@@ -101,12 +101,11 @@ public class WorldManager implements Controller {
             return;
         }
 
-        Vec2 pos = new Vec2(x, y);
-        Organism child = spawnOrganism(pos, type);
+        Organism child = spawnOrganism(tilePos, type);
         addToWorld(child);
     }
 
-    private boolean isOutOfBounds(Vec2 newPosition) {
+    public boolean isOutOfBounds(Vec2 newPosition) {
         boolean x_hit = newPosition.x() < 0 || newPosition.x() >= worldMap.length;
         boolean y_hit = newPosition.y() < 0 || newPosition.y() >= worldMap[0].length;
 

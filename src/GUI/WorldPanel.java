@@ -4,7 +4,6 @@ import BaseClasses.Organism;
 import Structs.Vec2;
 import WorldManager.WorldManager;
 import Structs.Types;
-import items.Item;
 import movementHandler.movementType;
 
 import javax.swing.*;
@@ -29,7 +28,7 @@ public abstract class WorldPanel extends JPanel {
         this.addComponentListener(createComponentListener());
     }
 
-    protected void showSpawnMenu(int gX, int gY, int pX, int pY) {
+    protected void showSpawnMenu(Vec2 gPos, Vec2 pPos) {
         JPopupMenu popup = new JPopupMenu();
 
         for (var type : Types.values()) {
@@ -37,14 +36,14 @@ public abstract class WorldPanel extends JPanel {
 
             JMenuItem item = new JMenuItem(type.toString());
             item.addActionListener(e -> {
-                worldManager.handleTileAction(gX, gY, type);
+                worldManager.handleTileAction(gPos, type);
                 repaint();
             });
 
             popup.add(item);
         }
 
-        popup.show(this, pX, pY);
+        popup.show(this, pPos.x(), pPos.y());
     }
 
     @Override
@@ -64,12 +63,13 @@ public abstract class WorldPanel extends JPanel {
 
     protected abstract Shape getTileAtPosition(int x, int y);
 
-    protected void decideCellAction(int tileX, int tileY, int mouseX, int mouseY) {
+    protected void decideCellAction(Vec2 tilePos, Vec2 mousePos) {
         var map = worldManager.getWorldMap();
-        if (map[tileX][tileY] == null) {
-            showSpawnMenu(tileX, tileY, mouseX, mouseY);
+        if (worldManager.isOutOfBounds(tilePos)) return;
+        if (map[tilePos.x()][tilePos.y()] == null) {
+            showSpawnMenu(tilePos, mousePos);
         } else {
-            worldManager.handleTileAction(tileX, tileY, Types.NONE);
+            worldManager.handleTileAction(tilePos, Types.NONE);
             repaint();
         }
     }
@@ -79,7 +79,7 @@ public abstract class WorldPanel extends JPanel {
         Vec2 mousePosition = getMousePosition(e);
         if (tilePosition == null) return;
 
-        decideCellAction(tilePosition.x(), tilePosition.y(), mousePosition.x(), mousePosition.y());
+        decideCellAction(tilePosition, mousePosition);
     }
 
     protected void handlePlayerMovement(MouseEvent e) {
@@ -155,13 +155,10 @@ public abstract class WorldPanel extends JPanel {
         return new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1) {          /* left-click */
-                    handleMouseClick(e);
-                    return;
-                } else if (e.getButton() == MouseEvent.BUTTON3) {   /* right-click */
-                    handlePlayerMovement(e);
-                } else {                                            /* other mouse buttons */
-                    handleSpecialAbilityClick(e);
+                switch (e.getButton()) {
+                    case MouseEvent.BUTTON1 -> handleMouseClick(e);             /* left-click */
+                    case MouseEvent.BUTTON3 -> handlePlayerMovement(e);         /* right-click */
+                    case MouseEvent.BUTTON2 -> handleSpecialAbilityClick(e);    /* middle-click */
                 }
                 worldManager.setTurnRequested(true);
             }
