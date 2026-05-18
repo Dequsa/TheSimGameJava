@@ -1,6 +1,7 @@
 package Animals.Human;
 
 import BaseClasses.SpecialAnimal;
+import GUI.TextPrinter;
 import Structs.*;
 import items.Item;
 import movementHandler.GridType;
@@ -23,7 +24,7 @@ public class Human extends SpecialAnimal {
         final int HUMAN_MOVE_SPEED = 1;
         final int POTION_STR = 10;
 
-        specialItems.add(new items.StrengthPotion(POTION_STR, 5, printer));
+        specialItems.add(new items.StrengthPotion(POTION_STR, 5));
 
         data = new OrganismData(Types.HUMAN, HUMAN_STR, HUMAN_INIT, HUMAN_MOVE_SPEED, HUMAN_COLOR);
     }

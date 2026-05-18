@@ -1,4 +1,5 @@
 package BaseClasses;
+import GUI.TextPrinter;
 import Structs.Controller;
 import Structs.OrganismData;
 import Structs.Vec2;

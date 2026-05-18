@@ -7,10 +7,8 @@ import java.io.Serializable;
 
 public abstract class Item implements Serializable {
     int duration = 0;
-    final TextPrinter printer;
-    public Item(int duration, TextPrinter printer) {
+    public Item(int duration) {
         this.duration = duration;
-        this.printer = printer;
     }
 
     public abstract void applyEffect(Organism o);

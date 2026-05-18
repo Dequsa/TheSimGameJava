@@ -5,44 +5,34 @@ import GUI.WorldPanel;
 import Input.InputHandler;
 import Tools.ObjectManager;
 import WorldManager.WorldManager;
+import menu.MainMenu;
 import movementHandler.GridType;
 
 public class Main {
-  void main() {
+  public static void main(String[] args) {
     int defaultWinSizeX = 800;
     int defaultWinSizeY = 600;
-
-    int radius = 20;
-    int organismCount = 0;
-    GridType gridType = GridType.HEXAGON;
+    var window = new WindowInstance(defaultWinSizeX, defaultWinSizeY);
+    MainMenu mainMenu = new MainMenu(window);
     final String savePath = "save.dat";
 
-    ObjectManager manager = new ObjectManager();
+    window.addComponent(mainMenu);
+    window.show();
 
-//    WorldManager worldManager = new WorldManager(gridType,organismCount, radius);
+    WorldManager worldManager = null;
 
-    WorldManager worldManager = (WorldManager) manager.loadGameState(savePath);
-    worldManager.setRunning(true);
+    while (worldManager == null) {
+      worldManager = mainMenu.getWorldManager();
 
-    var window = new WindowInstance(defaultWinSizeX, defaultWinSizeY);
-
-    var keyHandler = new InputHandler(worldManager);
-    window.addKeyListener(keyHandler);
-
-    WorldPanel worldPanel = null;
-
-    switch (gridType) {
-      case SQUARE ->  {
-        worldPanel = new SquarePanel(worldManager, radius);
-      }
-      case HEXAGON ->  {
-        worldPanel = new HexagonPanel(worldManager,radius);
+      try {
+        Thread.sleep(50);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        return;
       }
     }
 
-    window.addComponent(worldPanel);
-
-    window.show();
+    ObjectManager objectManager = mainMenu.getObjectManager();
 
     while (worldManager.isRunning()) {
       if (worldManager.isTurnRequested()) {
@@ -51,9 +41,15 @@ public class Main {
         window.refresh();
       }
 
-      try {Thread.sleep(10);} catch (InterruptedException e) {}
+      try {
+        Thread.sleep(10);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        return;
+      }
     }
-    manager.saveGameState(savePath, worldManager);
+
+    objectManager.saveGameState(savePath, worldManager);
 
     System.exit(0);
   }

@@ -529,4 +529,8 @@ public class WorldManager implements Controller, Serializable {
     public void setTurnRequested(boolean turnRequested) {
         this.turnRequested = turnRequested;
     }
+
+    public GridType getGridType() {
+        return gridType;
+    }
 }

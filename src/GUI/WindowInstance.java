@@ -34,6 +34,10 @@ public class WindowInstance {
         frame.getContentPane().add(component, BorderLayout.CENTER);
     }
 
+    public void removeComponent(JComponent component) {
+        frame.getContentPane().remove(component);
+    }
+
     public void addKeyListener(KeyListener keyListener) {
         frame.addKeyListener(keyListener);
     }
