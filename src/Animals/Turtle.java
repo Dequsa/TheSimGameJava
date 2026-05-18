@@ -46,7 +46,8 @@ public class Turtle extends SpecialAnimal {
 
     @Override
     public boolean specialAbility(Organism other) {
-        System.out.println(this + " has deflected: " + other);
+        controller.printText(this + " has deflected an attack from: " + other);
+//        System.out.println(this + " has deflected: " + other);
         return true;
     }
 }

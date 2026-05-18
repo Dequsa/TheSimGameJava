@@ -15,8 +15,6 @@ public class StrengthPotion extends Item{
     @Override
     public void applyEffect(Organism o) {
         o.setStr(o.getData().str() + STR_INCREASE);
-//        printer.print("Strength Potion used: +" + STR_INCREASE);
-        System.out.println("Strength Potion used: +" + STR_INCREASE);
     }
 
     @Override
@@ -24,7 +22,6 @@ public class StrengthPotion extends Item{
         if (duration <= 0) return;
 
         o.setStr(o.getData().str() - PER_TURN_DECREASE);
-        System.out.println("Strength Potion is decaying: -" + PER_TURN_DECREASE);
         duration--;
     }
 

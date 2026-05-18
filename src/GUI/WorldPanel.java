@@ -159,7 +159,7 @@ public abstract class WorldPanel extends JPanel {
                     case MouseEvent.BUTTON3 -> handlePlayerMovement(e);         /* right-click */
                     case MouseEvent.BUTTON2 -> handleSpecialAbilityClick(e);    /* middle-click */
                 }
-                worldManager.setTurnRequested(true);
+//                worldManager.setTurnRequested(true);
             }
         };
     }

@@ -14,39 +14,45 @@ public class SideControlPanel extends JPanel implements TextPrinter {
 
         logContainer = new JPanel();
         logContainer.setLayout(new BoxLayout(logContainer, BoxLayout.Y_AXIS));
-        logContainer.setBackground(new Color(45, 45, 45)); // Match the background color
+        logContainer.setBackground(new Color(45, 45, 45));
 
         addScrollPanel();
         addMenu();
+    }
+
+    private JButton createSaveButton() {
+        JButton saveButton = new JButton("Exit and Save Game");
+
+        saveButton.addActionListener(e -> {
+            wm.setRunning(false);
+        });
+        return saveButton;
+    }
+
+    private JButton createMakeTurnButton() {
+        JButton makeTurnButton = new JButton("Make Turn");
+
+        makeTurnButton.addActionListener(e -> {
+            wm.setTurnRequested(true);
+        });
+        return makeTurnButton;
     }
 
     private void addMenu() {
         JMenuBar menu = new JMenuBar();
         menu.setBackground(new Color(134, 134, 134));
 
-        JButton saveButton = new JButton("Save Game");
-
-        saveButton.addActionListener(e -> {
-            wm.setRunning(false);
-        });
-
-        JButton turnButton = new JButton("Turn");
-
-        turnButton.addActionListener(e -> {
-            wm.setTurnRequested(true);
-        });
-
-        menu.add(saveButton);
-        menu.add(turnButton);
+        menu.add(createSaveButton());
+        menu.add(createMakeTurnButton());
 
         add(menu, BorderLayout.NORTH);
-
     }
 
     public void setWm(WorldManager wm) {
         this.wm = wm;
     }
 
+    // action LOGS
     private void addScrollPanel() {
         JScrollPane scrollPane = new JScrollPane(logContainer);
         scrollPane.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.BLACK));

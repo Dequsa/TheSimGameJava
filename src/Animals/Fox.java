@@ -35,7 +35,7 @@ public class Fox extends SpecialAnimal {
 
         super.move(safePosition);
 
-        System.out.println(this + " has avoided an enemy: " + other);
+        controller.printText(this + " has avoided an enemy: " + other);
 
         return true;
     }

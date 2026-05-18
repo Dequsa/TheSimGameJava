@@ -9,13 +9,17 @@ import java.awt.event.KeyListener;
 public class WindowInstance {
     private final JFrame frame;
     private WorldManager wm;
+    private SideControlPanel sidePanel = new SideControlPanel();
 
     public WindowInstance(int width, int height) {
         String WINDOW_NAME = "Simulation Game";
 
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
         frame = new JFrame(WINDOW_NAME);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(width, height));
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setMinimumSize(new Dimension(screenSize.width, screenSize.height));
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);
         frame.setUndecorated(false);
@@ -39,23 +43,24 @@ public class WindowInstance {
         gbc.weightx = 0.6;
         frame.getContentPane().add(gameGridPanel, gbc);
 
-        SideControlPanel sideConsole = new SideControlPanel();
-        sideConsole.setWm(wm);
+
+        sidePanel.setWm(wm);
 
         // side panel settings
         gbc.gridx = 1;
         gbc.weightx = 0.4;
-        frame.getContentPane().add(sideConsole, gbc);
+        frame.getContentPane().add(sidePanel, gbc);
 
         frame.revalidate();
         frame.pack();
         frame.setLocationRelativeTo(null);
 
-        return sideConsole;
+        return sidePanel;
     }
 
     public void refresh() {
         frame.repaint();
+        sidePanel.clear();
     }
 
     public void show() {

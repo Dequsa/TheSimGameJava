@@ -46,6 +46,7 @@ public class Human extends SpecialAnimal {
     @Override
     public void useSpecialItem(Item item) {
         if (specialItems.contains(item)) {
+            controller.printText("Special item used: " + item);
             item.applyEffect(this);
             usedItems.add(item);
             specialItems.remove(item);

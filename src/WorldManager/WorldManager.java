@@ -105,7 +105,7 @@ public class WorldManager implements Controller, Serializable {
         if (target != null) {
             target.setActive(false);
             removeFromWorld(target);
-            System.out.println("Removed organism: " + target);
+            printText("Removed organism: " + target);
             return;
         }
 
@@ -199,13 +199,23 @@ public class WorldManager implements Controller, Serializable {
     }
 
     private void populateMap(int organismCount) {
+        int human_count = 0;
         for (int i = 0; i < organismCount; i++) {
             int type_id = rand.nextInt(Types.NONE.ordinal());
             Types type = Types.values()[type_id];
+
+            if (type == Types.HUMAN && human_count >= 1) {
+                type = Types.GRASS;
+            }
+
             var childPosition = getRandomPosition();
             var child = spawnOrganism(childPosition, type);
 
             if (child == null) continue;
+
+            if (child.getData().type() == Types.HUMAN) {
+                human_count++;
+            }
 
             addToWorld(child);
         }
@@ -409,6 +419,11 @@ public class WorldManager implements Controller, Serializable {
     }
 
     @Override
+    public void printText(String text) {
+        printer.print(text);
+    }
+
+    @Override
     public boolean requestMove(Organism o, Vec2 moveVec) {
         if (o == null) {
             return false;
@@ -466,7 +481,7 @@ public class WorldManager implements Controller, Serializable {
                     Organism target = worldMap[checkPosition.x()][checkPosition.y()];
                     if (target.getData().type().ordinal() > Types.GRASS.ordinal()) continue;
 
-                    System.out.println(target + " got hit by an AOE attack!");
+                    printText(target + " got hit by an AOE attack!");
                     removeFromWorld(target);
                 }
             }

@@ -10,6 +10,9 @@ public interface Controller {
         REPRODUCE,
         NONE
     }
+
+    void printText(String text);
+
     boolean requestMove(Organism o, Vec2 moveVec);
 
     MoveResults moveResults(Organism o, Vec2 moveVec);
