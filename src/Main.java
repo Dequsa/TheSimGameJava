@@ -10,9 +10,7 @@ import movementHandler.GridType;
 
 public class Main {
   public static void main(String[] args) {
-    int defaultWinSizeX = 800;
-    int defaultWinSizeY = 600;
-    var window = new WindowInstance(defaultWinSizeX, defaultWinSizeY);
+    var window = new WindowInstance();
     MainMenu mainMenu = new MainMenu(window);
     final String savePath = "save.dat";
 
@@ -20,10 +18,8 @@ public class Main {
     window.show();
 
     WorldManager worldManager = null;
-
     while (worldManager == null) {
       worldManager = mainMenu.getWorldManager();
-
       try {
         Thread.sleep(50);
       } catch (InterruptedException e) {

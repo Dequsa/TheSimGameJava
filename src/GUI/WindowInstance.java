@@ -9,9 +9,9 @@ import java.awt.event.KeyListener;
 public class WindowInstance {
     private final JFrame frame;
     private WorldManager wm;
-    private SideControlPanel sidePanel = new SideControlPanel();
+    private final SideControlPanel sidePanel = new SideControlPanel();
 
-    public WindowInstance(int width, int height) {
+    public WindowInstance() {
         String WINDOW_NAME = "Simulation Game";
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -19,7 +19,7 @@ public class WindowInstance {
         frame = new JFrame(WINDOW_NAME);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setMinimumSize(new Dimension(screenSize.width, screenSize.height));
+        frame.setMinimumSize(new Dimension(screenSize.width / 2, screenSize.height / 2));
         frame.setResizable(true);
         frame.setLocationRelativeTo(null);
         frame.setUndecorated(false);
@@ -79,4 +79,6 @@ public class WindowInstance {
     public void addKeyListener(KeyListener keyListener) {
         frame.addKeyListener(keyListener);
     }
+
+    public JFrame getFrame() { return frame;}
 }

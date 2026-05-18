@@ -42,7 +42,7 @@ public class MainMenu extends JPanel {
             wp = chooseWorldPanel();
             launchActiveGamePanel();
         } else {
-            JOptionPane.showMessageDialog(this, "Failed to load state or save file missing.", "Load Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(window.getFrame(), "Failed to load state or save file missing.", "Load Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -92,8 +92,7 @@ public class MainMenu extends JPanel {
         form.add(new JLabel("Grid Geometry:"));
         form.add(gridMenu);
 
-        int result = JOptionPane.showConfirmDialog(this, form,
-                "Configure New Simulation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        int result = JOptionPane.showConfirmDialog(window.getFrame(), form, "Configure New Simulation", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
         if (result == JOptionPane.OK_OPTION) {
             try {
@@ -103,7 +102,7 @@ public class MainMenu extends JPanel {
                 this.gridType = (GridType) gridMenu.getSelectedItem();
 
                 if (tileSize <= 0 || mapSize <= 0 || organismCount <= 0) {
-                    JOptionPane.showMessageDialog(this, "All values must be greater than 0!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(window.getFrame(), "All values must be greater than 0!", "Validation Error", JOptionPane.ERROR_MESSAGE);
                     showGameConfigDialog();
                     return;
                 }
