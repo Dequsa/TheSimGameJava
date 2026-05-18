@@ -55,6 +55,13 @@ public class SquarePanel extends WorldPanel {
     }
 
     @Override
+    public Dimension getPreferredSize() {
+        int totalWidth = (worldManager.getMapSizeX() * cellSize) + (margin * 2);
+        int totalHeight = (worldManager.getMapSizeY() * cellSize) + (margin * 2);
+        return new Dimension(totalWidth, totalHeight);
+    }
+
+    @Override
     protected void drawGrid(Graphics2D g2d) {
         var map = worldManager.getWorldMap();
 

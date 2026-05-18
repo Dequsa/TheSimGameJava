@@ -3,6 +3,7 @@ package WorldManager;
 import Animals.*;
 import Animals.Human.Human;
 import BaseClasses.Organism;
+import GUI.TextPrinter;
 import Plants.Grass;
 import Plants.SowThistle;
 import Plants.SpecialPlants.Belladonna;
@@ -16,6 +17,7 @@ import movementHandler.GridType;
 import movementHandler.HexagonMovement;
 import movementHandler.SquareMovement;
 import movementHandler.movementType;
+import org.w3c.dom.Text;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class WorldManager implements Controller, Serializable {
     private Direction nextMoveDirection = Direction.NONE;
     private final Random rand = new Random(); // randomizer
     private movementType positionFinder = null;
+    private TextPrinter printer;
     private final ArrayList<Organism> organisms;
     private final Organism[][] worldMap;
     private final ArrayList<Organism> toAdd = new ArrayList<>();
@@ -73,6 +76,10 @@ public class WorldManager implements Controller, Serializable {
         organisms = new ArrayList<>(organismCount);
         worldMap = new Organism[mapSize][mapSize];
         populateMap(organismCount);
+    }
+
+    public void setPrinter(TextPrinter printer) {
+        this.printer = printer;
     }
 
 //    public boolean isTileNextToOrganism(int tileX, int tileY) {

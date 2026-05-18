@@ -31,6 +31,7 @@ public class Main {
         return;
       }
     }
+    worldManager.setRunning(true);
 
     ObjectManager objectManager = mainMenu.getObjectManager();
 

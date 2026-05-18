@@ -16,20 +16,20 @@ public class HexagonPanel extends WorldPanel {
 
     public HexagonPanel(WorldManager worldManager, int radius) {
         super(worldManager, radius);
-        updatePreferredSize();
+//        updatePreferredSize();
 
         movementHandler = new HexagonMovement();
     }
 
-    private void updatePreferredSize() {
-        double hexWidth = Math.sqrt(3) * cellSize;
-        double hexHeight = cellSize * 1.5;
-
-        int totalWidth = (int) (worldManager.getMapSizeX() * hexWidth + (hexWidth / 2.0)) + (margin * 2);
-        int totalHeight = (int) (worldManager.getMapSizeY() * hexHeight + (cellSize * 0.5)) + (margin * 2);
-
-        this.setPreferredSize(new Dimension(totalWidth, totalHeight));
-    }
+//    private void updatePreferredSize() {
+//        double hexWidth = Math.sqrt(3) * cellSize;
+//        double hexHeight = cellSize * 1.5;
+//
+//        int totalWidth = (int) (worldManager.getMapSizeX() * hexWidth + (hexWidth / 2.0)) + (margin * 2);
+//        int totalHeight = (int) (worldManager.getMapSizeY() * hexHeight + (cellSize * 0.5)) + (margin * 2);
+//
+//        this.setPreferredSize(new Dimension(totalWidth, totalHeight));
+//    }
 
     private Polygon getHexagonAtPosition(int x, int y) {
         double hexWidth = Math.sqrt(3) * cellSize;
@@ -56,6 +56,16 @@ public class HexagonPanel extends WorldPanel {
             polygon.addPoint(pX, pY);
         }
         return polygon;
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        double hexWidth = Math.sqrt(3) * cellSize;
+        double hexHeight = cellSize * 1.5;
+
+        int totalWidth = (int) (worldManager.getMapSizeX() * hexWidth + (hexWidth / 2.0)) + (margin * 2);
+        int totalHeight = (int) (worldManager.getMapSizeY() * hexHeight + (cellSize * 0.5)) + (margin * 2);
+        return new Dimension(totalWidth, totalHeight);
     }
 
     @Override

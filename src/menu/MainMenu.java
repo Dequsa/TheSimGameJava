@@ -64,7 +64,7 @@ public class MainMenu extends JPanel {
         if (wp == null) return;
 
         window.removeComponent(this);
-        window.addComponent(wp);
+        wm.setPrinter(window.launchGame(wp, wm));
         window.refresh();
     }
 

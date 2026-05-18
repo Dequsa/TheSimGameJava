@@ -13,7 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public abstract class WorldPanel extends JPanel implements TextPrinter {
+public abstract class WorldPanel extends JPanel {
     protected final WorldManager worldManager;
     protected int cellSize;
     protected final int margin = 20;
@@ -29,36 +29,13 @@ public abstract class WorldPanel extends JPanel implements TextPrinter {
     }
 
     @Override
-    public void print(String str) {
-        JLabel text = new JLabel(str);
-        text.setForeground(Color.WHITE);
-        text.setFont(new Font("Arial", Font.BOLD, 16));
-        text.setBounds(margin, margin, 100, 20);
-        add(text);
-    }
+    public abstract Dimension getPreferredSize();
 
-    @Override
-    public void clear() {
+    protected abstract Shape getTileAtPosition(int x, int y);
 
-    }
+    protected abstract void drawGrid(Graphics2D g2d);
 
-    protected void showSpawnMenu(Vec2 gPos, Vec2 pPos) {
-        JPopupMenu popup = new JPopupMenu();
-
-        for (var type : Types.values()) {
-            if (type == Types.NONE) continue;
-
-            JMenuItem item = new JMenuItem(type.toString());
-            item.addActionListener(e -> {
-                worldManager.handleTileAction(gPos, type);
-                repaint();
-            });
-
-            popup.add(item);
-        }
-
-        popup.show(this, pPos.x(), pPos.y());
-    }
+    protected abstract ComponentListener createComponentListener();
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -74,8 +51,6 @@ public abstract class WorldPanel extends JPanel implements TextPrinter {
     private Vec2 getMousePosition(MouseEvent e) {
         return new Vec2(e.getX(), e.getY());
     }
-
-    protected abstract Shape getTileAtPosition(int x, int y);
 
     protected void decideCellAction(Vec2 tilePos, Vec2 mousePos) {
         var map = worldManager.getWorldMap();
@@ -98,7 +73,6 @@ public abstract class WorldPanel extends JPanel implements TextPrinter {
 
     protected void handlePlayerMovement(MouseEvent e) {
         Vec2 tilePosition = getMouseTilePosition(e);
-
         if (tilePosition == null) return;
 
         handleRightMouseClick(tilePosition.x(), tilePosition.y());
@@ -122,7 +96,6 @@ public abstract class WorldPanel extends JPanel implements TextPrinter {
 
     protected void handleRightMouseClick(int tileX, int tileY) {
         ArrayList<Organism> organisms = worldManager.getContollableOrganisms();
-
         if (organisms.isEmpty()) return;
 
         Vec2 tilePosition = new Vec2(tileX, tileY);
@@ -136,9 +109,23 @@ public abstract class WorldPanel extends JPanel implements TextPrinter {
         }
     }
 
+    protected void showSpawnMenu(Vec2 gPos, Vec2 pPos) {
+        JPopupMenu popup = new JPopupMenu();
+        for (var type : Types.values()) {
+            if (type == Types.NONE) continue;
+
+            JMenuItem item = new JMenuItem(type.toString());
+            item.addActionListener(e -> {
+                worldManager.handleTileAction(gPos, type);
+                repaint();
+            });
+            popup.add(item);
+        }
+        popup.show(this, pPos.x(), pPos.y());
+    }
+
     private void showAndChooseItemFromMenu(Organism org, int pX, int pY) {
         JPopupMenu popup = new JPopupMenu();
-
         for (var it : org.getSpecialItems()) {
             if (it == null) continue;
 
@@ -147,10 +134,8 @@ public abstract class WorldPanel extends JPanel implements TextPrinter {
                 org.useSpecialItem(it);
                 repaint();
             });
-
             popup.add(item);
         }
-
         popup.show(this, pX, pY);
     }
 
@@ -178,8 +163,4 @@ public abstract class WorldPanel extends JPanel implements TextPrinter {
             }
         };
     }
-
-    protected abstract ComponentListener createComponentListener();
-
-    protected abstract void drawGrid(Graphics2D g2d);
 }
