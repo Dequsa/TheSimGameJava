@@ -1,5 +1,6 @@
 package Input;
 
+import Structs.Vec2;
 import WorldManager.WorldManager;
 import Structs.Direction;
 
@@ -21,6 +22,7 @@ public class InputHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_Q -> worldManager.setRunning(false);
+            case KeyEvent.VK_S -> worldManager.setNextMoveDirection(new Vec2(0, -1));
 //            case KeyEvent.VK_W -> worldManager.setNextMoveDirection(Direction.UP);
 //            case KeyEvent.VK_E -> worldManager.setNextMoveDirection(Direction.UP_RIGHT);
 //            case KeyEvent.VK_A -> worldManager.setNextMoveDirection(Direction.LEFT);

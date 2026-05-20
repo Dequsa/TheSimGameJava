@@ -5,6 +5,7 @@ import GUI.GridDisplay.HexagonPanel;
 import GUI.GridDisplay.SquarePanel;
 import GUI.WindowInstance;
 import GUI.WorldPanel;
+import Input.InputHandler;
 import Tools.ObjectManager;
 import WorldManager.WorldManager;
 import movementHandler.GridType;
@@ -23,6 +24,7 @@ public class MainMenu extends JPanel {
 
     private WorldManager wm = null;
     private WorldPanel wp = null;
+    private InputHandler ih = null;
     private final ObjectManager om = new ObjectManager();
     private final WindowInstance window;
 
@@ -35,11 +37,19 @@ public class MainMenu extends JPanel {
         createButtons();
     }
 
+    private void addInputHandler() {
+        ih = new InputHandler(wm);
+        wp.addKeyListener(ih);
+    }
+
     private void loadSavedGame() {
         wm = (WorldManager) om.loadGameState(savePath);
         if (wm != null) {
             this.gridType = wm.getGridType();
             wp = chooseWorldPanel();
+            if (wp == null) return;
+            ih = new InputHandler(wm);
+            wp.addKeyListener(ih);
             launchActiveGamePanel();
         } else {
             JOptionPane.showMessageDialog(window.getFrame(), "Failed to load state or save file missing.", "Load Error", JOptionPane.ERROR_MESSAGE);
@@ -71,12 +81,16 @@ public class MainMenu extends JPanel {
     private void initAndStartNewGame() {
         wm = new WorldManager(gridType, organismCount, mapSize);
         wp = chooseWorldPanel();
+
+        if (wp == null) return;
+
+        ih = new InputHandler(wm);
+        wp.addKeyListener(ih);
         launchActiveGamePanel();
     }
 
     private void showGameConfigDialog() {
         JPanel form = new JPanel(new GridLayout(4, 2, 10, 10));
-
         JTextField tileSizeText = new JTextField(String.valueOf(tileSize));
         JTextField mapSizeText = new JTextField(String.valueOf(mapSize));
         JTextField organismCountText = new JTextField(String.valueOf(organismCount));

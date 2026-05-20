@@ -10,14 +10,12 @@ import Plants.SpecialPlants.Belladonna;
 import Plants.SpecialPlants.Guarma;
 import Plants.SpecialPlants.Hogweed;
 import Structs.Controller;
-import Structs.Direction;
 import Structs.Types;
 import Structs.Vec2;
 import movementHandler.GridType;
 import movementHandler.HexagonMovement;
 import movementHandler.SquareMovement;
 import movementHandler.movementType;
-import org.w3c.dom.Text;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,7 +25,7 @@ public class WorldManager implements Controller, Serializable {
     private final GridType gridType;
     private boolean isRunning = true;
     private boolean turnRequested = false;
-    private Direction nextMoveDirection = Direction.NONE;
+    private Vec2 nextMoveDirection = null;
     private final Random rand = new Random(); // randomizer
     private movementType positionFinder = null;
     private TextPrinter printer;
@@ -37,15 +35,22 @@ public class WorldManager implements Controller, Serializable {
     private final ArrayList<Organism> toRemove = new ArrayList<>();
     private final ArrayList<Organism> contollableOrganisms = new ArrayList<>();
 
-    public Direction getNextMoveDirection() {
-        return nextMoveDirection;
+
+    @Override
+    public Vec2 getMoveDirection() {
+        if (nextMoveDirection == null) {
+            return null;
+        }
+        Vec2 returnDir = nextMoveDirection;
+        nextMoveDirection = null;
+        return returnDir;
     }
 
-    public void setNextMoveDirection(Direction nextMoveDirection) {
+    public void setNextMoveDirection(Vec2 nextMoveDirection) {
         this.nextMoveDirection = nextMoveDirection;
     }
 
-    public ArrayList<Organism> getContollableOrganisms() {
+    public ArrayList<Organism> getControllableOrganisms() {
         return contollableOrganisms;
     }
 
@@ -218,6 +223,11 @@ public class WorldManager implements Controller, Serializable {
             }
 
             addToWorld(child);
+        }
+
+        if (human_count == 0 && organismCount > 0) {
+            addToWorld(spawnOrganism(new Vec2(0, 0), Types.HUMAN));
+            removeOrganism(organisms.getFirst());
         }
     }
 
@@ -468,24 +478,58 @@ public class WorldManager implements Controller, Serializable {
         }
     }
 
-    private void aoeAttack(Organism attacker) {
-        for (int x = -1; x <= 1; x++) {
-            for (int y = -1; y <= 1; y++) {
-                if (x == 0 && y == 0) continue;
+    private movementType ChoosePositionFinder() {
+        switch (gridType) {
+            case GridType.SQUARE -> {
+                return new SquareMovement();
+            }
 
-                Vec2 checkPosition = attacker.getPosition().add(new Vec2(x, y));
+            case GridType.HEXAGON -> {
+                return new HexagonMovement();
+            }
 
-                if (isOutOfBounds(checkPosition)) continue;
-                if (isOccupied(checkPosition)) {
-
-                    Organism target = worldMap[checkPosition.x()][checkPosition.y()];
-                    if (target.getData().type().ordinal() > Types.GRASS.ordinal()) continue;
-
-                    printText(target + " got hit by an AOE attack!");
-                    removeFromWorld(target);
-                }
+            default -> {
+                return null;
             }
         }
+    }
+
+    private void aoeAttack(Organism attacker) {
+        movementType positionFinder = ChoosePositionFinder();
+
+        if (positionFinder == null) return;
+
+        Vec2 []possible_tiles = positionFinder.getSingleStep(attacker.getPosition().y());
+
+        for (var relativePos : possible_tiles) {
+            var checkPos = attacker.getPosition().add(relativePos);
+            if (isOutOfBounds(checkPos)) continue;
+            if (!isOccupied(checkPos)) continue;
+
+            Organism target = worldMap[checkPos.x()][checkPos.y()];
+            if (target.getData().type().ordinal() > Types.GRASS.ordinal()) continue;
+
+            printText(target + " got hit by an AOE attack!");
+            removeFromWorld(target);
+        }
+//
+//        for (int x = -1; x <= 1; x++) {
+//            for (int y = -1; y <= 1; y++) {
+//                if (x == 0 && y == 0) continue;
+//
+//                Vec2 checkPosition = attacker.getPosition().add(new Vec2(x, y));
+//
+//                if (isOutOfBounds(checkPosition)) continue;
+//                if (isOccupied(checkPosition)) {
+//
+//                    Organism target = worldMap[checkPosition.x()][checkPosition.y()];
+//                    if (target.getData().type().ordinal() > Types.GRASS.ordinal()) continue;
+//
+//                    printText(target + " got hit by an AOE attack!");
+//                    removeFromWorld(target);
+//                }
+//            }
+//        }
     }
 
     @Override

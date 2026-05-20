@@ -95,7 +95,7 @@ public abstract class WorldPanel extends JPanel {
     }
 
     protected void handleRightMouseClick(int tileX, int tileY) {
-        ArrayList<Organism> organisms = worldManager.getContollableOrganisms();
+        ArrayList<Organism> organisms = worldManager.getControllableOrganisms();
         if (organisms.isEmpty()) return;
 
         Vec2 tilePosition = new Vec2(tileX, tileY);
@@ -107,6 +107,7 @@ public abstract class WorldPanel extends JPanel {
                 org.setMoveVector(moveVec);
             }
         }
+        worldManager.setTurnRequested(true);
     }
 
     protected void showSpawnMenu(Vec2 gPos, Vec2 pPos) {

@@ -71,6 +71,10 @@ public class Human extends SpecialAnimal {
     @Override
     public void update() {
         super.update();
+        Vec2 wmMoveVec = controller.getMoveDirection();
+        if (wmMoveVec != null) {
+            moveVec = wmMoveVec;
+        }
         itemDecay();
         moveVec = null;
     }

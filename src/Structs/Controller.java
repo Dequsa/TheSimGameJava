@@ -15,6 +15,8 @@ public interface Controller {
 
     boolean requestMove(Organism o, Vec2 moveVec);
 
+    Vec2 getMoveDirection();
+
     MoveResults moveResults(Organism o, Vec2 moveVec);
 
     MoveResults sowingResults(Organism o, Vec2 moveVec, boolean isAOE, boolean sowing);
